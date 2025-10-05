@@ -12,6 +12,17 @@ const NavBar = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     });
+    const handleDownload = (e) => {
+        if (e.currentTarget.getAttribute('href') != "") {
+            return;
+        }
+        const link = document.createElement('a');
+        link.href = '/public/My_Resume.pdf';
+        link.download = 'My_Resume.pdf'; // customize the filename
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
     return (
         <header className={`navbar ${scrolled ? 'scrolled' : 'not-scrolled'}`}>
             <div className='inner'>
@@ -23,7 +34,7 @@ const NavBar = () => {
                     <ul>
                         {navLinks.map(({ link, name }) => (
                             <li key={name} className='group'>
-                                <a href={link}>
+                                <a href={link} onClick={handleDownload}>
                                     <span>{name}</span>
                                     <span className='underline'></span>
                                 </a>

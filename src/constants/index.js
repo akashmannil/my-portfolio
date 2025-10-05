@@ -12,8 +12,13 @@ const navLinks = [
     link: "#skills",
   },
   {
-    name: "Testimonials",
-    link: "#testimonials",
+    name: "Industry Exposure",
+    link: "#industryExp",
+  },
+  {
+    name: "Download Resume",
+    link: "",
+    download: true
   },
 ];
 
@@ -29,10 +34,10 @@ const words = [
 ];
 
 const counterItems = [
-  { value: 15, suffix: "+", label: "Years of Experience" },
-  { value: 200, suffix: "+", label: "Satisfied Clients" },
-  { value: 108, suffix: "+", label: "Completed Projects" },
-  { value: 90, suffix: "%", label: "Client Retention Rate" },
+  { value: 4, suffix: "+", label: "Years of Experience" },
+  { value: 100, suffix: "%", label: "Customer Satisfaction / Feedback Scores" },
+  { value: 3, suffix: " < hours", label: "Average Time to Resolution" },
+  { value: 99, suffix: "%", label: "Codebase Quality / Test Coverage" },
 ];
 
 const logoIconsList = [
@@ -54,20 +59,29 @@ const logoIconsList = [
   {
     imgPath: "/images/logos/company-logo-6.png",
   },
-  {
-    imgPath: "/images/logos/company-logo-7.png",
-  },
-  {
-    imgPath: "/images/logos/company-logo-8.png",
-  },
+  // {
+  //   imgPath: "/images/logos/company-logo-7.png",
+  // },
+  // {
+  //   imgPath: "/images/logos/company-logo-8.png",
+  // },
   {
     imgPath: "/images/logos/company-logo-9.png",
   },
+  // {
+  //   imgPath: "/images/logos/company-logo-10.png",
+  // },
+  // {
+  //   imgPath: "/images/logos/company-logo-11.png",
+  // },
   {
-    imgPath: "/images/logos/company-logo-10.png",
+    imgPath: "/images/logos/company-logo-12.png",
   },
   {
-    imgPath: "/images/logos/company-logo-11.png",
+    imgPath: "/images/logos/company-logo-13.png",
+  },
+  {
+    imgPath: "/images/logos/company-logo-14.png",
   },
 ];
 
@@ -114,7 +128,7 @@ const techStackImgs = [
 
 const techStackIcons = [
   {
-    name: "React Developer",
+    name: "React/Angular Developer",
     modelPath: "/models/react_logo-transformed.glb",
     scale: 1,
     rotation: [0, 0, 0],
@@ -126,7 +140,7 @@ const techStackIcons = [
     rotation: [0, 0, 0],
   },
   {
-    name: "Backend Developer",
+    name: "NodeJS/ExpressJS Developer",
     modelPath: "/models/node-transformed.glb",
     scale: 5,
     rotation: [0, -Math.PI / 2, 0],
@@ -148,41 +162,41 @@ const techStackIcons = [
 const expCards = [
   {
     review:
-      "Adrian brought creativity and technical expertise to the team, significantly improving our frontend performance. His work has been invaluable in delivering faster experiences.",
-    imgPath: "/images/exp1.png",
-    logoPath: "/images/logo1.png",
-    title: "Frontend Developer",
-    date: "January 2023 - Present",
+      "Akash improved our WordPress site with clean, user-focused pages and impactful performance optimizations.",
+    imgPath: "/images/exp_1_2_.png",
+    logoPath: "/images/logo_4_1.png",
+    title: "Wordpress Developer",
+    date: "January 2024 - July 2024",
     responsibilities: [
-      "Developed and maintained user-facing features for the Hostinger website.",
-      "Collaborated closely with UI/UX designers to ensure seamless user experiences.",
+      "Developed and maintained user-facing pages for the wordpress website.",
+      "Collaborated closely with Users and Clients to ensure seamless user experiences.",
       "Optimized web applications for maximum speed and scalability.",
     ],
   },
   {
     review:
-      "Adrian’s contributions to Docker's web applications have been outstanding. He approaches challenges with a problem-solving mindset.",
-    imgPath: "/images/exp2.png",
-    logoPath: "/images/logo2.png",
-    title: "Full Stack Developer",
-    date: "June 2020 - December 2023",
+      "Akash delivered reliable front-end solutions, resolved critical issues efficiently, and played a key role in improving performance and user experience.",
+    imgPath: "/images/exp_2_1_.png",
+    logoPath: "/images/logo_5.png",
+    title: "Front End Developer",
+    date: "February 2020 - January 2023",
     responsibilities: [
-      "Led the development of Docker's web applications, focusing on scalability.",
-      "Worked with backend engineers to integrate APIs seamlessly with the frontend.",
-      "Contributed to open-source projects that were used with the Docker ecosystem.",
+      "Led risk control and resolved 15+ monthly incidents across production/non-production sites.",
+      "Built responsive UIs with Angular & MEAN stack, improving performance and user experience.",
+      "Used Splunk & internal tools to troubleshoot sessions, boosting detection speed by 25% and site efficiency.",
     ],
   },
   {
     review:
-      "Adrian’s work on Appwrite’s mobile app brought a high level of quality and efficiency. He delivered solutions that enhanced our mobile experience & meet our product goals.",
-    imgPath: "/images/exp3.png",
-    logoPath: "/images/logo3.png",
-    title: "React Native Developer",
-    date: "March 2019 - May 2020",
+      "Akash led the end-to-end development of a reliable internal tool with clean code, strong UI/UX focus, and excellent performance optimization.",
+    imgPath: "/images/exp_3.png",
+    logoPath: "/images/logo_6.png",
+    title: "Full Stack Developer",
+    date: "September 2019 - Feb 2020",
     responsibilities: [
-      "Built cross-platform mobile apps using React Native, integrating with Appwrite's backend services.",
-      "Improved app performance and user experience through code optimization and testing.",
-      "Coordinated with the product team to implement features based on feedback.",
+      "Developed TalentCapture using the MEAN stack to manage recruitment data.",
+      "Led full development lifecycle with focus on W3C standards and clean UI/UX.",
+      "Debugged and reviewed code to ensure performance and reliability.",
     ],
   },
 ];
@@ -249,24 +263,24 @@ const testimonials = [
 
 const socialImgs = [
   {
-    name: "insta",
-    url: "https://www.instagram.com/",
-    imgPath: "/images/insta.png",
+    name: "linkedin",
+    url: "https://in.linkedin.com/in/akash-mannil/",
+    imgPath: "/images/linkedin.png",
   },
   {
-    name: "fb",
-    url: "https://www.facebook.com/",
-    imgPath: "/images/fb.png",
+    name: "github",
+    url: "https://www.github.com/akashmannil/",
+    imgPath: "/images/github.png",
   },
   {
     name: "x",
-    url: "https://www.x.com/",
+    url: "https://x.com/akashmannil",
     imgPath: "/images/x.png",
   },
   {
-    name: "linkedin",
-    url: "https://www.linkedin.com/",
-    imgPath: "/images/linkedin.png",
+    name: "insta",
+    url: "https://www.instagram.com/notyrann/",
+    imgPath: "/images/insta.png",
   },
 ];
 

@@ -1,9 +1,10 @@
 
-const Button = ({ text, className, id }) => {
+const Button = ({ text, className, id, ele }) => {
   return (
     <a className={`${className ?? ''} cta-wrapper`}
+    href={ele}
     onClick={(e)=>{
-      e.preventDefault();
+      // e.preventDefault();
       const target = getElementById('.counter');
       if(target && id) {
         const offset = window.innerHeight*0.15;
