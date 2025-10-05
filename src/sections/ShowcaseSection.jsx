@@ -48,34 +48,39 @@ const ShowcaseSection = () => {
         <section id="work" ref={sectionRef} className='app-showcase'>
             <div className="w-full">
                 <div className='showcaselayout'>
-                    <div className='first-project-wrapper' ref={project1Ref}>
+                    <a href="https://lcsf2411.github.io/pm-mvp/">
+                    <div className='first-project-wrapper' ref={project1Ref} style={{width:"100%"}}>
                         <div className='image-wrapper'>
-                            <img src="/images/project1.png" alt="Ryde" />
+                            <img src="/images/project_1.png" alt="Ryde" />
                         </div>
                         <div className='text-content'>
-                            <h2>On-Demand Rides Made Simple with a Powerful, User friendly
-                                app called RYDE
+                            <h2>Showcasing Lambton College Project management excellence through well designed Webapp
                             </h2>
                             <p className='text-white-50 md:text-xl'>
-                                An app built with React Native, Expo and TailwindCSS for a
+                                An app built with jQuery, native JS and TailwindCSS for a
                                 fast, user friendly experience.
                             </p>
                         </div>
                     </div>
+                    </a>
 
                     <div className='project-list-wrapper overflow-hidden'>
+                        <a href="https://lcsf2411.github.io/">
                         <div className='project' ref={project2Ref}>
                             <div className='image-wrapper bg-[#ffefdb]'>
-                                <img src="/images/project2.png" alt="Library Management Platform" />
+                                <img src="/images/project_2.png" alt="Library Management Platform" />
                             </div>
-                            <h2>Library Management Platform</h2>
+                            <h2>ArcBlade Works - A Client Exposure Program (Basic WebSite)</h2>
                         </div>
+                        </a>
+                        <a href="https://moviesmanager.onrender.com/">
                         <div className='project' ref={project3Ref}>
                             <div className='image-wrapper bg-[#ffe7eb]'>
-                                <img src="/images/project3.png" alt="YC Directory" />
+                                <img src="/images/project_3.png" alt="YC Directory" />
                             </div>
-                            <h2>YC Directory - A Startup Showcase APP</h2>
+                            <h2>Movies Manager - A Startup Showcase WebAPP</h2>
                         </div>
+                        </a>
                     </div>
                 </div>
             </div>
