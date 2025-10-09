@@ -17,8 +17,8 @@ const NavBar = () => {
             return;
         }
         const link = document.createElement('a');
-        link.href = '/public/My_Resume.pdf';
-        link.download = 'My_Resume.pdf'; // customize the filename
+        link.href = '/My_Resume_9_10.pdf';
+        link.download = 'Akash_M_Resume.pdf'; // customize the filename
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
