@@ -162,6 +162,19 @@ const techStackIcons = [
 const expCards = [
   {
     review:
+      "Akash consistently contributed high-quality code in a remote, open-source environment, showing strong communication, reliability, and a proactive approach to collaboration.",
+    imgPath: "/images/exp_checkmate.jpg",
+    logoPath: "/images/exp_checkmate.jpg",
+    title: "Full Stack Developer Intern",
+    date: "January 2026 - April 2024",
+    responsibilities: [
+      "Contributed to an open-source project within a remote team, building and maintaining user-facing features.",
+      "Demonstrated strong communication, self-motivation, and reliability in a distributed work environment.",
+      "Supported development efforts with a focus on clean, scalable, and efficient code.",
+    ],
+  },
+  {
+    review:
       "Akash improved our WordPress site with clean, user-focused pages and impactful performance optimizations.",
     imgPath: "/images/exp_1_2_.png",
     logoPath: "/images/logo_4_1.png",
