@@ -1,17 +1,16 @@
-import React from 'react'
-import { navLinks } from '../constants'
+import { navLinks } from '../constants';
 import { useEffect, useState } from 'react';
 
 const NavBar = () => {
     const [scrolled, setScrolled] = useState(false);
+
     useEffect(() => {
         const handleScroll = () => {
-            const isScrolled = window.scrollY > 10;
-            setScrolled(true);
+            setScrolled(window.scrollY > 10);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    });
+    }, []);
     const handleDownload = (e) => {
         if (e.currentTarget.getAttribute('href') != "") {
             return;
