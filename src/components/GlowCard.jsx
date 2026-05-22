@@ -1,4 +1,3 @@
-import React from 'react'
 import { useRef } from 'react';
 
 const GlowCard = ({card, children, index}) => {
