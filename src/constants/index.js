@@ -12,14 +12,75 @@ const navLinks = [
     link: "#skills",
   },
   {
-    name: "Industry Exposure",
-    link: "#industryExp",
-  },
-  {
     name: "Download Resume",
     link: "",
     download: true
   },
+];
+
+const heroCopy = {
+  eyebrow: "Akash Mannil — Full Stack Developer",
+  lines: [
+    { text: "Code with", style: "sans" },
+    { text: "character.", style: "serif" },
+  ],
+  sub: "Four years of building fast, reliable, human-friendly software — from Angular front ends at enterprise scale to open-source full-stack work.",
+};
+
+const manifesto =
+  "I believe great software feels effortless. Every interface I build starts with a question — how should this feel? — and ends with clean, scalable code that answers it. From resolving production incidents at telecom scale to shipping open-source features with distributed teams, I bring craft, calm, and curiosity to every line.";
+
+const projects = [
+  {
+    title: "Project Management MVP",
+    desc: "Showcasing Lambton College project management excellence through a well-designed web app built with jQuery, native JS and TailwindCSS.",
+    imgPath: "/images/project_1.png",
+    url: "https://lcsf2411.github.io/pm-mvp/",
+    tags: ["JavaScript", "jQuery", "TailwindCSS"],
+  },
+  {
+    title: "ArcBlade Works",
+    desc: "A client exposure program website — clean, fast and purpose-built for a real client brief.",
+    imgPath: "/images/project_2.png",
+    url: "https://lcsf2411.github.io/",
+    tags: ["HTML", "CSS", "JavaScript"],
+  },
+  {
+    title: "Movies Manager",
+    desc: "A startup-showcase web app for browsing and managing movie collections, deployed on Render.",
+    imgPath: "/images/project_3.png",
+    url: "https://moviesmanager.onrender.com/",
+    tags: ["Node.js", "Express", "MongoDB"],
+  },
+];
+
+const sceneData = {
+  laptopScreen: [
+    { text: 'const dev = "Akash Mannil"', tone: 'base' },
+    { text: 'dev.role = "Full Stack Developer"', tone: 'base' },
+    { text: 'dev.experience = "4+ years"', tone: 'accent' },
+    { text: 'dev.stack = [React, Node, Python]', tone: 'base' },
+    { text: '// code with character.', tone: 'dim' },
+    { text: 'dev.ship(ideas, craft) _', tone: 'accent' },
+  ],
+  deskScreen: [
+    { text: '~ $ whoami', tone: 'dim' },
+    { text: 'Akash - builder of calm software', tone: 'base' },
+    { text: '~ $ uptime', tone: 'dim' },
+    { text: '4+ years / enterprise to open source', tone: 'accent' },
+  ],
+  contactScreen: [
+    { text: '> establishing uplink...', tone: 'dim' },
+    { text: '> channel: OPEN', tone: 'accent' },
+    { text: '> response time: fast', tone: 'base' },
+    { text: '> send_message( ) _', tone: 'accent' },
+  ],
+};
+
+const skillRows = [
+  ["React", "Angular", "JavaScript", "TypeScript", "HTML", "CSS"],
+  ["Node.js", "Express", "MongoDB", "Python", "MEAN Stack", "REST APIs"],
+  ["Three.js", "GSAP", "TailwindCSS", "WordPress", "Splunk", "Git"],
 ];
 
 const words = [
@@ -133,7 +194,7 @@ const expCards = [
     imgPath: "/images/exp_checkmate.jpg",
     logoPath: "/images/exp_checkmate.jpg",
     title: "Full Stack Developer Intern",
-    date: "January 2026 - April 2024",
+    date: "January 2026 - April 2026",
     responsibilities: [
       "Contributed to an open-source project within a remote team, building and maintaining user-facing features.",
       "Demonstrated strong communication, self-motivation, and reliability in a distributed work environment.",
@@ -276,4 +337,9 @@ export {
   techStackIcons,
   techStackImgs,
   navLinks,
+  heroCopy,
+  manifesto,
+  projects,
+  skillRows,
+  sceneData,
 };

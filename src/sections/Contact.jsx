@@ -1,120 +1,35 @@
-import { useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
-
-import TitleHeader from "../components/TitleHeader";
-import ContactExperience from "../components/Models/contact/ContactExperience";
-
-
+import ContactForm from '../components/ContactForm';
+import { socialImgs } from '../constants';
 
 const Contact = () => {
-  const formRef = useRef(null);
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); // Show loading state
-
-    try {
-      await emailjs.sendForm(
-        import.meta.env.VITE_APP_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID,
-        formRef.current,
-        import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY
-      );
-
-      // Reset form and stop loading
-      setForm({ name: "", email: "", message: "" });
-    } catch (error) {
-      console.error("EmailJS Error:", error); // Optional: show toast
-    } finally {
-      setLoading(false); // Always stop loading, even on error
-    }
-  };
-
   return (
-    <section id="contact" className="flex-center section-padding">
-      <div className="w-full h-full md:px-10 px-5">
-        <TitleHeader
-          title="Get in Touch – Let’s Connect"
-          sub="💬 Have questions or ideas? Let’s talk! 🚀"
-        />
-        <div className="grid-12-cols mt-16">
-          <div className="xl:col-span-5">
-            <div className="flex-center card-border rounded-xl p-10">
-              <form
-                ref={formRef}
-                onSubmit={handleSubmit}
-                className="w-full flex flex-col gap-7"
+    <section id="contact" className="relative px-5 md:px-16 py-32 md:py-48">
+      <div className="grid md:grid-cols-2 gap-16 md:gap-24">
+        <div>
+          <p className="eyebrow mb-3">One more thing</p>
+          <h2 className="display-section mb-10">
+            Let’s build something{' '}
+            <span className="serif-accent text-ember">quietly brilliant.</span>
+          </h2>
+          <p className="text-fog font-light text-lg leading-relaxed max-w-md mb-12">
+            Have a project, a role, or just an idea worth talking about? My inbox
+            is always open.
+          </p>
+          <div className="flex gap-6">
+            {socialImgs.map(({ name, url }) => (
+              <a
+                key={name}
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono text-xs uppercase tracking-[0.25em] text-fog hover:text-accent transition-colors duration-300"
               >
-                <div>
-                  <label htmlFor="name">Your name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="How can I address you?"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email">Your Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="What’s your email address?"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message">Your Message</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    placeholder="How can I help you?"
-                    rows="5"
-                    required
-                  />
-                </div>
-
-                <button type="submit">
-                  <div className="cta-button group">
-                    <div className="bg-circle" />
-                    <p className="text">
-                      {loading ? "Sending..." : "Send Message"}
-                    </p>
-                    <div className="arrow-wrapper">
-                      <img src="/images/arrow-down.svg" alt="arrow" />
-                    </div>
-                  </div>
-                </button>
-              </form>
-            </div>
-          </div>
-          <div className="xl:col-span-7 min-h-96">
-            <div className="bg-[#cd7c2e] w-full h-full hover:cursor-grab rounded-3xl overflow-hidden">
-              <ContactExperience />
-            </div>
+                {name}
+              </a>
+            ))}
           </div>
         </div>
+        <ContactForm />
       </div>
     </section>
   );

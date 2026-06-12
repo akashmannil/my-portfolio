@@ -1,74 +1,62 @@
-import { words } from "../constants"
-import Button from "../components/Button"
-import HeroExperience from "../components/HeroModels/HeroExperience"
-import { useGSAP } from "@gsap/react"
-import gsap from "gsap"
-import AnimatedCounter from "../components/AnimatedCounter"
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { heroCopy } from '../constants';
 
 const Hero = () => {
-    useGSAP(() => {
-        gsap.fromTo('.hero-text h1',
-            {
-                y:50,
-                opacity:0
-            },
-            {
-                y:0,
-                opacity:1,
-                stagger:0.2,
-                duration:2,
-                ease:'power2.inOut'
-            }
-        )
-    });
+  useGSAP(() => {
+    gsap
+      .timeline({ defaults: { ease: 'power3.out' } })
+      .fromTo(
+        '.hero-eyebrow',
+        { opacity: 0, letterSpacing: '1.2em' },
+        { opacity: 1, letterSpacing: '0.45em', duration: 1.6 }
+      )
+      .fromTo(
+        '.hero-line',
+        { yPercent: 110 },
+        { yPercent: 0, duration: 1.1, stagger: 0.18 },
+        '-=1.1'
+      )
+      .fromTo(
+        '.hero-sub, .hero-cue',
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.9, stagger: 0.15 },
+        '-=0.5'
+      );
+  }, []);
+
   return (
-    <section id="hero" className='relative overflow-hidden'>
-        <div className='absolute top-0 left-0 z-10'>
-            <img src="/images/bg.png" alt="background" />
-        </div>
-
-        <div className='hero-layout'>
-            <header className='flex flex-col justify-center md:w-full w-screen
-            md:px-20 px-5'>
-                <div className='flex flex-col gap-7'>
-                    <div className='hero-text'>
-                        <h1>Shaping 
-                            <span className="slide">
-                                <span className="wrapper">
-                                    {words.map((word) => (
-                                        <span key={word.text} className="flex items-center md:gap-3 gap-1 pb-2">
-                                            <img src={word.imgPath} alt={word.text}
-                                            className="xl:size-12 md:size-10 size-7 md:p-2 p-1 rounded-2xl bg-white-50"/>
-                                            <span>{word.text}</span>
-                                        </span>
-                                    ))}
-                                </span>
-                            </span>
-                        </h1>
-                        <h1>into Real Projects</h1>
-                        <h1>that Deliver Results</h1>
-                    </div>
-                    <p className="text-white-50 md:text-xl relative z-10 pointer-events-none">                        
-                        Hi, I'm Akash, a Full-Stack Developer with a passion for code.</p>
-                    <Button
-                    className="md:w-80 md:h-16 w-60 h-12"
-                    id="button"
-                    text="See my Work"
-                    ele="#work"
-                    />
-                </div>
-            </header>
-            
-            <figure>
-                <div className="hero-3d-layout">
-                    <HeroExperience/>
-                </div>
-            </figure>
-        </div>
-
-        <AnimatedCounter/>
+    <section
+      id="hero"
+      className="relative min-h-screen flex flex-col justify-center px-5 md:px-16"
+    >
+      <p className="hero-eyebrow eyebrow mb-8">{heroCopy.eyebrow}</p>
+      <h1 className="display-hero">
+        {heroCopy.lines.map(({ text, style }) => (
+          <span key={text} className="block overflow-hidden pb-[0.08em]">
+            <span
+              className={`hero-line block ${
+                style === 'serif' ? 'serif-accent text-accent' : ''
+              }`}
+            >
+              {text}
+            </span>
+          </span>
+        ))}
+      </h1>
+      <p className="hero-sub max-w-xl mt-10 text-fog text-lg md:text-xl font-light leading-relaxed">
+        {heroCopy.sub}
+      </p>
+      <div className="hero-cue absolute bottom-10 left-5 md:left-16 flex items-center gap-4">
+        <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-fog">
+          Scroll to begin
+        </span>
+        <span className="block w-16 h-px bg-line relative overflow-hidden">
+          <span className="absolute inset-y-0 left-0 w-1/3 bg-accent animate-pulse" />
+        </span>
+      </div>
     </section>
-  )
-}
+  );
+};
 
-export default Hero
+export default Hero;

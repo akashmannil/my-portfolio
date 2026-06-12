@@ -9,8 +9,9 @@ This is **Akash Mannil's personal portfolio** — a single-page React app with 3
 ## Stack at a Glance
 
 - **React 19** + **Vite 7** — no class components, use functional components only
-- **Tailwind CSS 4** — utility-first; custom tokens defined in `src/index.css` under `:root`
-- **Three.js / @react-three/fiber** — 3D rendering; all Canvas components live in `src/components/HeroModels/` and `src/components/Models/`
+- **Tailwind CSS 4** — utility-first; custom tokens defined in `src/index.css` under `@theme`
+- **Three.js / @react-three/fiber** — 3D rendering; all Canvas components live in `src/components/three/` (a single fixed `ScrollStage` canvas drives the scroll experience)
+- **Lenis** — smooth scrolling, wired into GSAP's ticker in `src/App.jsx`
 - **GSAP 3** — animations use `useGSAP` hook (not `useEffect`); register plugins at module level (`gsap.registerPlugin(ScrollTrigger)`)
 - **EmailJS** — contact form; credentials are Vite env vars (`VITE_APP_EMAILJS_*`)
 
@@ -29,11 +30,14 @@ See `.claude/rules/` for detailed rules. Short version:
 | Task | Where to look |
 |---|---|
 | Change nav links | `src/constants/index.js` → `navLinks` |
-| Add/edit experience | `src/constants/index.js` → `expCards` |
-| Add a project | `src/sections/ShowcaseSection.jsx` + add image to `public/images/` |
+| Add/edit experience | `src/constants/index.js` → `expCards` (rendered by `src/sections/Journey.jsx`) |
+| Add a project | `src/constants/index.js` → `projects` + add image to `public/images/` |
+| Edit hero / manifesto copy | `src/constants/index.js` → `heroCopy`, `manifesto` |
+| Edit skill marquee rows | `src/constants/index.js` → `skillRows` |
 | Change social links | `src/constants/index.js` → `socialImgs` |
-| Change theme colours | `src/index.css` → `:root` custom properties |
-| Add a 3D model | Drop `.glb` in `public/models/`, reference in constants |
+| Change theme colours / fonts | `src/index.css` → `@theme` tokens |
+| Tune 3D scroll choreography | `src/components/three/stagePose.js` → `sectionKeyframes` |
+| Edit a 3D scene (laptop, desk, graph, sphere, cards, rack, terminal) | `src/components/three/` → scene component named in `stageSequence` |
 
 ## Dev Commands
 
