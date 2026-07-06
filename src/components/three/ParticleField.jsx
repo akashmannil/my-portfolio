@@ -1,10 +1,12 @@
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { isCompact, prefersReducedMotion } from './responsive';
 
-const COUNT = 350;
+const COUNT = isCompact() ? 150 : 350;
 
 const ParticleField = () => {
   const points = useRef(null);
+  const reduced = useMemo(() => prefersReducedMotion(), []);
 
   const positions = useMemo(() => {
     const arr = new Float32Array(COUNT * 3);
@@ -20,6 +22,7 @@ const ParticleField = () => {
   }, []);
 
   useFrame((state) => {
+    if (reduced) return;
     points.current.rotation.y = state.clock.elapsedTime * 0.015;
     points.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.05) * 0.08;
   });

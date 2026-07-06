@@ -10,6 +10,11 @@ import ProjectCards3D from './ProjectCards3D';
 import ServerRack from './ServerRack';
 import ContactDish from './ContactDish';
 import { computeStagePose, stageSequence } from './stagePose';
+import { COMPACT_MAX_WIDTH, prefersReducedMotion } from './responsive';
+
+// world-unit gap kept between an actor and the frustum edge so its body
+// never clips off-screen; larger than the widest scene's half-width
+const EDGE_PAD = 0.9;
 
 const SCENES = {
   laptop: FloatingLaptop,
@@ -26,9 +31,22 @@ const MorphRig = () => {
   const glow = useRef(null);
   const actors = useRef([]);
   const pose = useMemo(() => ({}), []);
+  const reduced = useMemo(() => prefersReducedMotion(), []);
 
   useFrame((state, delta) => {
     computeStagePose(pose);
+
+    // Responsive framing: the poses use world-space X offsets tuned for a wide
+    // landscape frustum. On narrower screens the visible horizontal span
+    // (tan(fov/2) * z * aspect) shrinks, so clamp X to keep every actor on
+    // screen, and shrink it to an ambient backdrop on tablet/phone. Desktop
+    // aspects leave the widest offsets untouched, so their look is unchanged.
+    const { camera, size } = state;
+    const aspect = size.width / size.height;
+    const halfWidth = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z * aspect;
+    const safeX = Math.max(halfWidth - EDGE_PAD, 0.1);
+    if (Math.abs(pose.x) > safeX) pose.x *= safeX / Math.abs(pose.x);
+    if (size.width < COMPACT_MAX_WIDTH) pose.scale *= 0.82;
 
     const g = stage.current;
     g.position.x = MathUtils.damp(g.position.x, pose.x, 2.5, delta);
@@ -51,10 +69,15 @@ const MorphRig = () => {
     c.r = MathUtils.damp(c.r, pose.cr, 3, delta);
     c.g = MathUtils.damp(c.g, pose.cg, 3, delta);
     c.b = MathUtils.damp(c.b, pose.cb, 3, delta);
+    glow.current.intensity = size.width < COMPACT_MAX_WIDTH ? 8 : 12;
   });
 
   return (
-    <Float speed={1.2} rotationIntensity={0.08} floatIntensity={0.35}>
+    <Float
+      speed={reduced ? 0 : 1.2}
+      rotationIntensity={reduced ? 0 : 0.08}
+      floatIntensity={reduced ? 0 : 0.35}
+    >
       <group ref={stage}>
         {stageSequence.map((key, i) => {
           const Scene = SCENES[key];
