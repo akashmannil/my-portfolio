@@ -32,25 +32,39 @@ const manifesto =
 
 const projects = [
   {
+    title: "JobMatch",
+    desc: "A two-sided hiring platform that reframes the job hunt as live market intelligence — candidates track the roles, salaries and skills trending right now, while recruiters win on proof over reach. Built for signal, not spam.",
+    imgPath: "/images/job-finder.png",
+    url: "https://job-finder-poc.vercel.app/",
+    tags: ["React", "TypeScript", "Tailwind CSS"],
+  },
+  {
+    title: "QuestBoard",
+    desc: "A gamified promotion board for indie games where great titles rise on merit instead of ad budgets. Studios post quests, players level up and earn for spreading the word — all wrapped in a retro pixel-arcade UI with a day-by-day simulation.",
+    imgPath: "/images/quest-board.png",
+    url: "https://quest-board-poc.vercel.app/",
+    tags: ["React", "TypeScript", "Game UI"],
+  },
+  {
+    title: "CineVault",
+    desc: "A cinematic personal film archive for curating the movies that matter — rate them, keep private notes, build a watchlist and rediscover your taste over time. Full-stack app deployed on Render.",
+    imgPath: "/images/cinevault.png",
+    url: "https://moviesmanager.onrender.com/",
+    tags: ["Node.js", "Express", "MongoDB"],
+  },
+  {
     title: "Project Management MVP",
-    desc: "Showcasing Lambton College project management excellence through a well-designed web app built with jQuery, native JS and TailwindCSS.",
-    imgPath: "/images/project_1.png",
+    desc: "A polished marketing site for a college project-management program — hands-on curriculum, outcome stats and a clean, conversion-focused layout built with jQuery, vanilla JS and TailwindCSS.",
+    imgPath: "/images/pm-mvp.png",
     url: "https://lcsf2411.github.io/pm-mvp/",
     tags: ["JavaScript", "jQuery", "TailwindCSS"],
   },
   {
     title: "ArcBlade Works",
-    desc: "A client exposure program website — clean, fast and purpose-built for a real client brief.",
-    imgPath: "/images/project_2.png",
+    desc: "A premium brand site for a precision power-tool maker — bold editorial typography, smooth scroll and a product showcase, purpose-built for a real client brief.",
+    imgPath: "/images/arcblade.png",
     url: "https://lcsf2411.github.io/",
     tags: ["HTML", "CSS", "JavaScript"],
-  },
-  {
-    title: "Movies Manager",
-    desc: "A startup-showcase web app for browsing and managing movie collections, deployed on Render.",
-    imgPath: "/images/project_3.png",
-    url: "https://moviesmanager.onrender.com/",
-    tags: ["Node.js", "Express", "MongoDB"],
   },
 ];
 
