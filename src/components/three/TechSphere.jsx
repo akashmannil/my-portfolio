@@ -1,15 +1,21 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { Billboard, Text } from '@react-three/drei';
+import SkillPlanet from './SkillPlanet';
+import { skillSystem } from '../../constants';
 
-const ORBS = [
-  { color: '#61dafb', r: 1.1, incline: 0.35, speed: 0.55, phase: 0 },
-  { color: '#8cc84b', r: 1.1, incline: 0.35, speed: 0.55, phase: Math.PI },
-  { color: '#ffd43b', r: 1.4, incline: -0.7, speed: 0.4, phase: 1.2 },
-  { color: '#3178c6', r: 1.4, incline: -0.7, speed: 0.4, phase: 1.2 + Math.PI },
-  { color: '#f05033', r: 1.7, incline: 1.15, speed: 0.28, phase: 2.4 },
-  { color: '#e34f26', r: 1.7, incline: 1.15, speed: 0.28, phase: 2.4 + Math.PI },
-  { color: '#47a248', r: 1.25, incline: 0.85, speed: 0.48, phase: 4 },
-  { color: '#dd0031', r: 1.55, incline: -0.3, speed: 0.34, phase: 5.2 },
+const FONT = '/fonts/jetbrains-mono.woff';
+
+// orbit choreography by slot; which skill rides each slot lives in constants
+const ORBITS = [
+  { r: 1.05, incline: 0.35, speed: 0.55, phase: 0 },
+  { r: 1.05, incline: 0.35, speed: 0.55, phase: Math.PI },
+  { r: 1.35, incline: -0.7, speed: 0.4, phase: 1.2 },
+  { r: 1.35, incline: -0.7, speed: 0.4, phase: 1.2 + Math.PI },
+  { r: 1.65, incline: 1.15, speed: 0.28, phase: 2.4 },
+  { r: 1.65, incline: 1.15, speed: 0.28, phase: 2.4 + Math.PI },
+  { r: 1.2, incline: 0.85, speed: 0.48, phase: 4 },
+  { r: 1.5, incline: -0.3, speed: 0.34, phase: 5.2 },
 ];
 
 const TechSphere = () => {
@@ -21,7 +27,10 @@ const TechSphere = () => {
     core.current.rotation.y = t * 0.2;
     core.current.rotation.x = Math.sin(t * 0.3) * 0.2;
     spinners.current.forEach((spinner, i) => {
-      if (spinner) spinner.rotation.y = t * ORBS[i].speed + ORBS[i].phase;
+      if (spinner) {
+        const { speed, phase } = ORBITS[i % ORBITS.length];
+        spinner.rotation.y = t * speed + phase;
+      }
     });
   });
 
@@ -35,24 +44,34 @@ const TechSphere = () => {
         <sphereGeometry args={[0.32, 24, 24]} />
         <meshStandardMaterial color="#101016" metalness={0.8} roughness={0.2} />
       </mesh>
-      {ORBS.map(({ color, r, incline }, i) => (
-        <group key={color} rotation={[incline, 0, incline * 0.4]}>
-          <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[r, 0.004, 8, 64]} />
-            <meshBasicMaterial color="#3d4654" transparent opacity={0.35} />
-          </mesh>
-          <group ref={(el) => (spinners.current[i] = el)}>
-            <mesh position={[r, 0, 0]}>
-              <sphereGeometry args={[0.09, 16, 16]} />
-              <meshBasicMaterial color={color} />
+      <Billboard position={[0, -0.78, 0]}>
+        <Text
+          font={FONT}
+          fontSize={0.06}
+          letterSpacing={0.14}
+          color="#c9f24b"
+          anchorX="center"
+          anchorY="top"
+        >
+          {skillSystem.core}
+        </Text>
+      </Billboard>
+      {skillSystem.planets.map((planet, i) => {
+        const { r, incline } = ORBITS[i % ORBITS.length];
+        return (
+          <group key={planet.label} rotation={[incline, 0, incline * 0.4]}>
+            <mesh rotation={[Math.PI / 2, 0, 0]}>
+              <torusGeometry args={[r, 0.004, 8, 64]} />
+              <meshBasicMaterial color="#3d4654" transparent opacity={0.35} />
             </mesh>
-            <mesh position={[r, 0, 0]}>
-              <sphereGeometry args={[0.13, 12, 12]} />
-              <meshBasicMaterial color={color} transparent opacity={0.18} />
-            </mesh>
+            <group ref={(el) => (spinners.current[i] = el)}>
+              <group position={[r, 0, 0]}>
+                <SkillPlanet {...planet} />
+              </group>
+            </group>
           </group>
-        </group>
-      ))}
+        );
+      })}
     </group>
   );
 };

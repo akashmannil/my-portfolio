@@ -14,8 +14,8 @@ const NavBar = () => {
     if (e.currentTarget.getAttribute('href') !== '') return;
     e.preventDefault();
     const link = document.createElement('a');
-    link.href = '/My_Resume_9_10.pdf';
-    link.download = 'Akash_Mannil_Resume.pdf';
+    link.href = '/Akash-Mannil-Resume.pdf';
+    link.download = 'Akash-Mannil-Resume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

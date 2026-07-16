@@ -34,6 +34,7 @@ See `.claude/rules/` for detailed rules. Short version:
 | Add a project | `src/constants/index.js` → `projects` + add image to `public/images/` |
 | Edit hero / manifesto copy | `src/constants/index.js` → `heroCopy`, `manifesto` |
 | Edit skill marquee rows | `src/constants/index.js` → `skillRows` |
+| Edit skill solar system (3D skills scene) | `src/constants/index.js` → `skillSystem` (rendered by `TechSphere` / `SkillPlanet`) |
 | Change social links | `src/constants/index.js` → `socialImgs` |
 | Change theme colours / fonts | `src/index.css` → `@theme` tokens |
 | Tune 3D scroll choreography | `src/components/three/stagePose.js` → `sectionKeyframes` |
