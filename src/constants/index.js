@@ -257,9 +257,9 @@ const expCards = [
     title: "Full Stack Developer Intern",
     date: "January 2026 - April 2026",
     responsibilities: [
-      "Contributing to Checkmate, an open-source infrastructure monitoring platform tracking uptime, servers, Docker containers, and hardware health.",
+      "Contributed to Checkmate, an open-source infrastructure monitoring platform tracking uptime, servers, Docker containers, and hardware health.",
       "Rebuilt and optimized React components for the status and uptime dashboard pages, improving data clarity and user interaction.",
-      "Collaborating asynchronously with an international open-source team, maintaining clean commit history and PR documentation.",
+      "Collaborated asynchronously with an international open-source team, maintaining clean commit history and PR documentation.",
     ],
   },
   {
