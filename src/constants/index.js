@@ -24,7 +24,7 @@ const heroCopy = {
     { text: "Code with", style: "sans" },
     { text: "character.", style: "serif" },
   ],
-  sub: "Four years of building fast, reliable, human-friendly software — from Angular front ends at enterprise scale to open-source full-stack work.",
+  sub: "Six years of building fast, reliable, human-friendly software — from Angular front ends at enterprise scale to open-source full-stack work.",
 };
 
 const manifesto =
@@ -72,8 +72,8 @@ const sceneData = {
   laptopScreen: [
     { text: 'const dev = "Akash Mannil"', tone: 'base' },
     { text: 'dev.role = "Full Stack Developer"', tone: 'base' },
-    { text: 'dev.experience = "4+ years"', tone: 'accent' },
-    { text: 'dev.stack = [React, Node, Python]', tone: 'base' },
+    { text: 'dev.experience = "6+ years"', tone: 'accent' },
+    { text: 'dev.stack = [React, Angular, Node]', tone: 'base' },
     { text: '// code with character.', tone: 'dim' },
     { text: 'dev.ship(ideas, craft) _', tone: 'accent' },
   ],
@@ -81,7 +81,7 @@ const sceneData = {
     { text: '~ $ whoami', tone: 'dim' },
     { text: 'Akash - builder of calm software', tone: 'base' },
     { text: '~ $ uptime', tone: 'dim' },
-    { text: '4+ years / enterprise to open source', tone: 'accent' },
+    { text: '6+ years / enterprise to open source', tone: 'accent' },
   ],
   contactScreen: [
     { text: '> establishing uplink...', tone: 'dim' },
@@ -97,6 +97,20 @@ const skillRows = [
   ["Three.js", "GSAP", "TailwindCSS", "WordPress", "Splunk", "Git"],
 ];
 
+const skillSystem = {
+  core: "javascript",
+  planets: [
+    { label: "react", color: "#61dafb", size: 0.115 },
+    { label: "typescript", color: "#4c8fd6", size: 0.09 },
+    { label: "angular", color: "#dd0031", size: 0.11, ring: true },
+    { label: "node.js", color: "#8cc84b", size: 0.1, moon: "express" },
+    { label: "mongodb", color: "#47a248", size: 0.085 },
+    { label: "python", color: "#ffd43b", size: 0.075 },
+    { label: "wordpress", color: "#5da9d1", size: 0.07 },
+    { label: "three.js", color: "#f4f2ec", size: 0.065, wireframe: true },
+  ],
+};
+
 const words = [
   { text: "Ideas", imgPath: "/images/ideas.svg" },
   { text: "Concepts", imgPath: "/images/concepts.svg" },
@@ -109,7 +123,7 @@ const words = [
 ];
 
 const counterItems = [
-  { value: 4, suffix: "+", label: "Years of Experience" },
+  { value: 6, suffix: "+", label: "Years of Experience" },
   { value: 100, suffix: "%", label: "Customer Satisfaction / Feedback Scores" },
   { value: 3, suffix: " < hours", label: "Average Time to Resolution" },
   { value: 99, suffix: "%", label: "Codebase Quality / Test Coverage" },
@@ -243,9 +257,9 @@ const expCards = [
     title: "Full Stack Developer Intern",
     date: "January 2026 - April 2026",
     responsibilities: [
-      "Contributed to an open-source project within a remote team, building and maintaining user-facing features.",
-      "Demonstrated strong communication, self-motivation, and reliability in a distributed work environment.",
-      "Supported development efforts with a focus on clean, scalable, and efficient code.",
+      "Contributing to Checkmate, an open-source infrastructure monitoring platform tracking uptime, servers, Docker containers, and hardware health.",
+      "Rebuilt and optimized React components for the status and uptime dashboard pages, improving data clarity and user interaction.",
+      "Collaborating asynchronously with an international open-source team, maintaining clean commit history and PR documentation.",
     ],
   },
   {
@@ -254,7 +268,7 @@ const expCards = [
     imgPath: "/images/exp_1_2_.png",
     logoPath: "/images/logo_4_1.png",
     title: "Wordpress Developer",
-    date: "January 2024 - July 2024",
+    date: "January 2024 - June 2024",
     responsibilities: [
       "Developed and maintained user-facing pages for the wordpress website.",
       "Collaborated closely with Users and Clients to ensure seamless user experiences.",
@@ -352,12 +366,12 @@ const testimonials = [
 const socialImgs = [
   {
     name: "linkedin",
-    url: "https://in.linkedin.com/in/akash-mannil/",
+    url: "https://www.linkedin.com/in/akash-mannil/",
     imgPath: "/images/linkedin.png",
   },
   {
     name: "github",
-    url: "https://www.github.com/akashmannil/",
+    url: "https://github.com/akashmannil",
     imgPath: "/images/github.png",
   },
   {
@@ -388,5 +402,6 @@ export {
   manifesto,
   projects,
   skillRows,
+  skillSystem,
   sceneData,
 };
