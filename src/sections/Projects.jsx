@@ -1,60 +1,57 @@
 import { useRef } from 'react';
 import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { projects } from '../constants';
+import NextChapter from '../components/NextChapter';
+import RepoCard from '../components/RepoCard';
+import useGithubRepos from '../hooks/useGithubRepos';
+import { stageInputs } from '../components/three/stagePose';
+import { projects, github } from '../constants';
 
-gsap.registerPlugin(ScrollTrigger);
-
-const Projects = () => {
+const Projects = ({ onSelect }) => {
   const sectionRef = useRef(null);
+  const { repos, status } = useGithubRepos();
 
-  useGSAP(() => {
-    gsap.utils.toArray('.project-card').forEach((card) => {
+  useGSAP(
+    () => {
       gsap.fromTo(
-        card,
-        { opacity: 0, y: 80 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: card, start: 'top bottom-=120' },
-        }
+        '.project-card',
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.12, delay: 0.15 }
       );
-    });
-    gsap.utils.toArray('.project-media img').forEach((img) => {
-      gsap.fromTo(
-        img,
-        { yPercent: -8, scale: 1.12 },
-        {
-          yPercent: 8,
-          scale: 1.12,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: img.closest('.project-media'),
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        }
-      );
-    });
-  }, []);
+    },
+    { scope: sectionRef }
+  );
+
+  useGSAP(
+    () => {
+      if (repos.length) {
+        gsap.fromTo(
+          '.repo-card',
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 }
+        );
+      }
+    },
+    { scope: sectionRef, dependencies: [repos] }
+  );
+
+  const focusCard = (i) =>
+    gsap.to(stageInputs, { project: Math.min(i, 2), duration: 0.8, ease: 'power2.out' });
 
   return (
-    <section id="work" ref={sectionRef} className="relative px-5 md:px-16 py-32 md:py-48">
+    <section id="work" ref={sectionRef} className="relative px-5 md:px-16 pt-32 md:pt-40 pb-24">
       <p className="eyebrow mb-3">Selected work</p>
-      <h2 className="display-section mb-20 md:mb-32">
+      <h2 className="display-section mb-16 md:mb-24">
         Built, shipped, <span className="serif-accent text-glacier">loved.</span>
       </h2>
-      <div className="space-y-28 md:space-y-40">
+      <div className="space-y-24 md:space-y-32">
         {projects.map((project, i) => (
           <a
             key={project.title}
             href={project.url}
             target="_blank"
             rel="noreferrer"
+            onMouseEnter={() => focusCard(i)}
             className={`project-card group grid md:grid-cols-12 gap-8 items-center ${
               i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''
             }`}
@@ -63,7 +60,7 @@ const Projects = () => {
               <img
                 src={project.imgPath}
                 alt={project.title}
-                className="w-full h-64 md:h-[55vh] object-cover transition-transform duration-700"
+                className="w-full h-64 md:h-[50vh] object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
             <div className="md:col-span-5 md:px-8">
@@ -88,6 +85,52 @@ const Projects = () => {
           </a>
         ))}
       </div>
+
+      <div className="mt-28 md:mt-36">
+        <p className="eyebrow mb-3">Fresh from GitHub</p>
+        <h3 className="display-section mb-6">
+          Latest <span className="serif-accent text-accent">commits.</span>
+        </h3>
+        <p className="text-fog font-light max-w-xl mb-12">
+          Pulled live from my GitHub profile — whatever I pushed most recently shows up
+          here on its own.
+        </p>
+        {status === 'loading' && (
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-fog animate-pulse">
+            Fetching repositories…
+          </p>
+        )}
+        {status === 'error' && (
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-fog">
+            GitHub is rate-limiting right now —{' '}
+            <a
+              href={`https://github.com/${github.username}?tab=repositories`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-accent hover:text-paper transition-colors duration-300"
+            >
+              browse everything on GitHub ↗
+            </a>
+          </p>
+        )}
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {repos.map((repo) => (
+            <RepoCard key={repo.name} repo={repo} />
+          ))}
+        </div>
+        {status === 'ready' && (
+          <a
+            href={`https://github.com/${github.username}?tab=repositories`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block mt-12 font-mono text-xs uppercase tracking-[0.3em] text-fog hover:text-accent transition-colors duration-300"
+          >
+            View all repositories ↗
+          </a>
+        )}
+      </div>
+
+      <NextChapter current="work" onSelect={onSelect} className="mt-20" />
     </section>
   );
 };

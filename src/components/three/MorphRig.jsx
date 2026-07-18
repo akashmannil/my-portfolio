@@ -46,7 +46,12 @@ const MorphRig = () => {
     const halfWidth = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z * aspect;
     const safeX = Math.max(halfWidth - EDGE_PAD, 0.1);
     if (Math.abs(pose.x) > safeX) pose.x *= safeX / Math.abs(pose.x);
-    if (size.width < COMPACT_MAX_WIDTH) pose.scale *= 0.82;
+    if (size.width < COMPACT_MAX_WIDTH) {
+      // phone/tablet: tuck the scene up top as an ambient backdrop so it
+      // never sits on the tab's copy
+      pose.scale *= 0.65;
+      pose.y += 1.0;
+    }
 
     const g = stage.current;
     g.position.x = MathUtils.damp(g.position.x, pose.x, 2.5, delta);

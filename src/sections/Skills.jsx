@@ -1,38 +1,34 @@
 import { useRef } from 'react';
 import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import NextChapter from '../components/NextChapter';
 import { skillRows } from '../constants';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const ROW_STYLES = ['text-paper', 'text-outline', 'text-fog/60'];
 
-const Skills = () => {
+const Skills = ({ onSelect }) => {
   const sectionRef = useRef(null);
 
-  useGSAP(() => {
-    gsap.utils.toArray('.skill-row').forEach((row, i) => {
-      gsap.fromTo(
-        row,
-        { xPercent: i % 2 === 0 ? 0 : -22 },
-        {
-          xPercent: i % 2 === 0 ? -22 : 0,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        }
-      );
-    });
-  }, []);
+  useGSAP(
+    () => {
+      gsap.utils.toArray('.skill-row').forEach((row, i) => {
+        gsap.fromTo(
+          row,
+          { xPercent: i % 2 === 0 ? 0 : -50 },
+          { xPercent: i % 2 === 0 ? -50 : 0, duration: 45 + i * 12, ease: 'none', repeat: -1 }
+        );
+      });
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section id="skills" ref={sectionRef} className="relative py-32 md:py-48 overflow-hidden">
-      <div className="px-5 md:px-16 mb-16 md:mb-24">
+    <section
+      id="skills"
+      ref={sectionRef}
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-28 pb-16"
+    >
+      <div className="px-5 md:px-16 mb-14 md:mb-20">
         <p className="eyebrow mb-3">The toolkit</p>
         <h2 className="display-section">
           Fluent in <span className="serif-accent text-glacier">many tongues.</span>
@@ -55,6 +51,9 @@ const Skills = () => {
             ))}
           </div>
         ))}
+      </div>
+      <div className="px-5 md:px-16 mt-16 md:mt-24">
+        <NextChapter current="skills" onSelect={onSelect} />
       </div>
     </section>
   );

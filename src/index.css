@@ -30,14 +30,6 @@ body {
   font-family: var(--font-sans);
 }
 
-html.lenis {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
-}
-
 ::selection {
   background: var(--color-accent);
   color: var(--color-ink);
