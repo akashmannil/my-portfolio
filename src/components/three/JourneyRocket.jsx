@@ -1,11 +1,8 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Center, Resize, Text, useGLTF } from '@react-three/drei';
+import { Center, Resize, useGLTF } from '@react-three/drei';
 import { Color, MathUtils } from 'three';
 import { journeyFocus } from './stagePose';
-import { expCards } from '../../constants';
-
-const FONT = '/fonts/jetbrains-mono.woff';
 
 // "Minimal Cartoon Rocketship" by Gambsmoore (CC-BY 3.0) via poly.pizza
 const ROCKET = '/models/rocket-cartoon.glb';
@@ -61,37 +58,15 @@ const JourneyRocket = () => {
         </mesh>
       </group>
       {RING_YS.map((y, i) => (
-        <group key={y}>
-          <mesh
-            position={[0, y, 0]}
-            rotation={[Math.PI / 2, 0, 0]}
-            ref={(el) => (rings.current[i] = el)}
-          >
-            <torusGeometry args={[0.55, 0.016, 8, 48]} />
-            <meshBasicMaterial color="#55637a" transparent opacity={0.25} />
-          </mesh>
-          <Text
-            font={FONT}
-            fontSize={0.055}
-            color="#c8d4e4"
-            anchorX="left"
-            anchorY="bottom"
-            maxWidth={1.15}
-            position={[0.68, y + 0.02, 0]}
-          >
-            {expCards[i].title}
-          </Text>
-          <Text
-            font={FONT}
-            fontSize={0.038}
-            color="#5d6b80"
-            anchorX="left"
-            anchorY="top"
-            position={[0.68, y - 0.03, 0]}
-          >
-            {expCards[i].date}
-          </Text>
-        </group>
+        <mesh
+          key={y}
+          position={[0, y, 0]}
+          rotation={[Math.PI / 2, 0, 0]}
+          ref={(el) => (rings.current[i] = el)}
+        >
+          <torusGeometry args={[0.55, 0.016, 8, 48]} />
+          <meshBasicMaterial color="#55637a" transparent opacity={0.25} />
+        </mesh>
       ))}
     </group>
   );

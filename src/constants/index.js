@@ -1,22 +1,22 @@
-const navLinks = [
-  {
-    name: "Work",
-    link: "#work",
-  },
-  {
-    name: "Experience",
-    link: "#experience",
-  },
-  {
-    name: "Skills",
-    link: "#skills",
-  },
-  {
-    name: "Download Resume",
-    link: "",
-    download: true
-  },
+const tabs = [
+  { id: "home", label: "Home" },
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "skills", label: "Skills" },
+  { id: "work", label: "Work" },
+  { id: "contact", label: "Contact" },
 ];
+
+const resumeFile = "/Akash-Mannil-Resume.pdf";
+
+// live "latest projects" feed on the Work tab — pulled from the GitHub API
+const github = {
+  username: "akashmannil",
+  maxRepos: 6,
+  // repos that shouldn't surface (profile readme, sandboxes, coursework)
+  excludeRepos: ["akashmannil", "my-portfolio", "new", "tc", "ty-app-akash"],
+  excludePrefixes: ["LCF24-"],
+};
 
 const heroCopy = {
   eyebrow: "Akash Mannil — Full Stack Developer",
@@ -33,6 +33,7 @@ const manifesto =
 const projects = [
   {
     title: "JobMatch",
+    repoName: "job-finder-poc",
     desc: "A two-sided hiring platform that reframes the job hunt as live market intelligence — candidates track the roles, salaries and skills trending right now, while recruiters win on proof over reach. Built for signal, not spam.",
     imgPath: "/images/job-finder.png",
     url: "https://job-finder-poc.vercel.app/",
@@ -40,6 +41,7 @@ const projects = [
   },
   {
     title: "QuestBoard",
+    repoName: "quest-board-poc",
     desc: "A gamified promotion board for indie games where great titles rise on merit instead of ad budgets. Studios post quests, players level up and earn for spreading the word — all wrapped in a retro pixel-arcade UI with a day-by-day simulation.",
     imgPath: "/images/quest-board.png",
     url: "https://quest-board-poc.vercel.app/",
@@ -47,6 +49,7 @@ const projects = [
   },
   {
     title: "CineVault",
+    repoName: "MoviesManager",
     desc: "A cinematic personal film archive for curating the movies that matter — rate them, keep private notes, build a watchlist and rediscover your taste over time. Full-stack app deployed on Render.",
     imgPath: "/images/cinevault.png",
     url: "https://moviesmanager.onrender.com/",
@@ -54,6 +57,7 @@ const projects = [
   },
   {
     title: "Project Management MVP",
+    repoName: "pm-mvp",
     desc: "A polished marketing site for a college project-management program — hands-on curriculum, outcome stats and a clean, conversion-focused layout built with jQuery, vanilla JS and TailwindCSS.",
     imgPath: "/images/pm-mvp.png",
     url: "https://lcsf2411.github.io/pm-mvp/",
@@ -61,6 +65,7 @@ const projects = [
   },
   {
     title: "ArcBlade Works",
+    repoName: "LCSF2411.github.io",
     desc: "A premium brand site for a precision power-tool maker — bold editorial typography, smooth scroll and a product showcase, purpose-built for a real client brief.",
     imgPath: "/images/arcblade.png",
     url: "https://lcsf2411.github.io/",
@@ -364,7 +369,9 @@ export {
   socialImgs,
   techStackIcons,
   techStackImgs,
-  navLinks,
+  tabs,
+  resumeFile,
+  github,
   heroCopy,
   manifesto,
   projects,
