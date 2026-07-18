@@ -227,6 +227,7 @@ const expCards = [
     imgPath: "/images/exp_checkmate.jpg",
     logoPath: "/images/exp_checkmate.jpg",
     title: "Full Stack Developer Intern",
+    brand: "FULL STACK",
     date: "January 2026 - April 2026",
     responsibilities: [
       "Contributed to Checkmate, an open-source infrastructure monitoring platform tracking uptime, servers, Docker containers, and hardware health.",
@@ -240,6 +241,7 @@ const expCards = [
     imgPath: "/images/exp_1_2_.png",
     logoPath: "/images/logo_4_1.png",
     title: "Wordpress Developer",
+    brand: "WORDPRESS",
     date: "January 2024 - June 2024",
     responsibilities: [
       "Developed and maintained user-facing pages for the wordpress website.",
@@ -253,6 +255,7 @@ const expCards = [
     imgPath: "/images/exp_2_1_.png",
     logoPath: "/images/logo_5.png",
     title: "Front End Developer",
+    brand: "FRONT END",
     date: "February 2020 - January 2023",
     responsibilities: [
       "Led risk control and resolved 15+ monthly incidents across production/non-production sites.",
@@ -266,6 +269,7 @@ const expCards = [
     imgPath: "/images/exp_3.png",
     logoPath: "/images/logo_6.png",
     title: "Full Stack Developer",
+    brand: "MEAN STACK",
     date: "September 2019 - Feb 2020",
     responsibilities: [
       "Developed TalentCapture using the MEAN stack to manage recruitment data.",

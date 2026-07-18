@@ -30,7 +30,7 @@ See `.claude/rules/` for detailed rules. Short version:
 |---|---|
 | Change tabs / nav | `src/constants/index.js` → `tabs` (rendered by `NavBar`, pages mapped in `TabView.jsx`) |
 | Tune the GitHub repo feed (Work tab) | `src/constants/index.js` → `github` (username, excludes, max count; fetched by `src/hooks/useGithubRepos.js`) |
-| Add/edit experience | `src/constants/index.js` → `expCards` (rendered by `src/sections/Journey.jsx`) |
+| Add/edit experience | `src/constants/index.js` → `expCards` (rendered by `src/sections/Journey.jsx`; `brand` is the short wordmark printed on the rocket hull) |
 | Add a project | `src/constants/index.js` → `projects` + add image to `public/images/` |
 | Edit hero / manifesto copy | `src/constants/index.js` → `heroCopy`, `manifesto` |
 | Edit skill marquee rows | `src/constants/index.js` → `skillRows` |
