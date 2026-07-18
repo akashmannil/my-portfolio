@@ -3,15 +3,19 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import JourneyPanel from '../components/JourneyPanel';
 import { stageInputs } from '../components/three/stagePose';
+import useEdgeNav from '../hooks/useEdgeNav';
 import { expCards } from '../constants';
 
-const Journey = ({ onSelect }) => {
+const Journey = ({ onSelect, entryDir = 1 }) => {
   const sectionRef = useRef(null);
-  const [step, setStep] = useState(0);
-  const prevStep = useRef(0);
+  // arriving from the next tab starts on the last role so a backward
+  // scroll journey walks the roles in reverse
+  const [step, setStep] = useState(entryDir < 0 ? expCards.length - 1 : 0);
+  const prevStep = useRef(step);
 
   useGSAP(
     () => {
+      const first = prevStep.current === step;
       const dir = step >= prevStep.current ? 1 : -1;
       gsap.to(stageInputs, { journey: step, duration: 0.9, ease: 'power2.inOut' });
       gsap.utils.toArray('.journey-panel').forEach((panel, i) => {
@@ -21,6 +25,8 @@ const Journey = ({ onSelect }) => {
             { autoAlpha: 0, y: 70 * dir },
             { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power3.out', overwrite: true }
           );
+        } else if (first) {
+          gsap.set(panel, { autoAlpha: 0 });
         } else {
           gsap.to(panel, { autoAlpha: 0, y: -70 * dir, duration: 0.35, ease: 'power2.in', overwrite: true });
         }
@@ -37,9 +43,25 @@ const Journey = ({ onSelect }) => {
 
   const advance = () =>
     step === expCards.length - 1 ? onSelect('skills') : setStep(step + 1);
+  const retreat = () => (step === 0 ? onSelect('about') : setStep(step - 1));
+
+  // this page doesn't scroll — wheel/swipe walks the roles, then crosses tabs
+  useEdgeNav({
+    manual: true,
+    requireEdges: false,
+    threshold: 120,
+    cooldown: 800,
+    onNext: advance,
+    onPrev: retreat,
+  });
 
   return (
-    <section id="experience" ref={sectionRef} className="relative h-screen overflow-hidden">
+    <section
+      id="experience"
+      ref={sectionRef}
+      data-manual-edge-nav
+      className="relative h-screen overflow-hidden"
+    >
       <header className="absolute top-24 left-5 md:left-16 z-10">
         <p className="eyebrow mb-3">The journey</p>
         <h2 className="display-section">
