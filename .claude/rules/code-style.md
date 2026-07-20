@@ -39,6 +39,6 @@ These rules apply to all JavaScript/JSX files in `src/`.
 
 ## Tailwind
 
-- Use custom CSS tokens (`--color-white-50`, etc.) via Tailwind's arbitrary value syntax when needed
-- Prefer existing utility classes over inline `style={{}}` props
-- Responsive prefixes: `md:` for tablet, `xl:` for desktop
+- Use custom theme tokens (`bg-ink`, `text-fog`, `text-accent`, etc. — defined in `src/index.css` under `@theme`) rather than raw hex; use arbitrary-value syntax (`text-[10px]`, `bg-ink/70`) where no token fits
+- Prefer existing utility classes over inline `style={{}}` props (the exception is values computed at runtime, e.g. the `ProjectHotspot` overlay position)
+- Responsive prefixes are mobile-first: base = phone, then `sm:` (≥640) `md:` (≥768) `lg:` (≥1024) `xl:` (≥1280). The 3D stage treats `<1024px` as "compact" (see `src/components/three/responsive.js`)

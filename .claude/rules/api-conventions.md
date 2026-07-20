@@ -4,11 +4,13 @@
 
 All static portfolio content lives in `src/constants/index.js`. Follow these conventions when editing:
 
-- Each exported constant is a plain array of plain objects — no functions, no JSX
+- Each exported constant is a plain array/object of plain values — no functions, no JSX
 - Image paths are relative to `public/` and start with `/` (e.g. `/images/logo.png`)
-- 3D model paths are relative to `public/models/` (e.g. `/models/react_logo-transformed.glb`)
+- 3D model paths are relative to `public/models/` (e.g. `/models/rocket-cartoon.glb`)
 - Dates in `expCards` must be chronologically ordered: start date before end date
 - All entries referencing a person's name must use the owner's name (Akash / Akash Mannil)
+
+Live constants in use: `tabs`, `resumeFile`, `github`, `heroCopy`, `manifesto`, `counterItems`, `projects`, `expCards`, `skillRows`, `skillSystem`, `sceneData`, `socialImgs`. Some legacy exports from the original template (`testimonials`, `abilities`, `words`, `logoIconsList`, `expLogos`, `techStackImgs`, `techStackIcons`) are still exported but unused — do not build new features on them.
 
 ## EmailJS integration
 
@@ -24,44 +26,39 @@ Never hard-code EmailJS IDs in component files.
 
 ## GSAP conventions
 
-```js
-// Register plugins at module level, outside the component
-gsap.registerPlugin(ScrollTrigger);
+There is **no ScrollTrigger and no Lenis** in this project — do not register or import them. Animations are triggered by mount (tab entry) and explicit UI events, not scroll position.
 
-// Use useGSAP inside components
+```js
+// Use useGSAP inside components. Scope selector-based tweens to the section
+// so they don't leak across tabs.
+const ref = useRef(null);
 useGSAP(() => {
-  gsap.fromTo('.target', { opacity: 0 }, { opacity: 1, scrollTrigger: { ... } });
-}, []);
+  gsap.fromTo('.target', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.8 });
+}, { scope: ref });
 ```
 
-- Always pass `[]` as the second arg to `useGSAP` for one-time setup
-- Use `.timeline-card`, `.expText` etc. class selectors — avoid querying by ID inside GSAP
+- Pass `{ scope: ref }` (or `[]` for one-time global setup) to `useGSAP`
+- Prefer class selectors (`.project-card`, `.m-word`, `.journey-panel`) over IDs
+- To animate the 3D stage, tween the shared `stageInputs` scalars — e.g. `gsap.to(stageInputs, { journey: step, duration: 0.9 })` — never tween Three.js objects from React
 
 ## Three.js / R3F conventions
 
-- All 3D canvases are wrapped in `<Canvas>` from `@react-three/fiber`
-- Always wrap model components with `<Suspense fallback={null}>` (or a spinner)
-- Use `useGLTF` from `@react-three/drei` for loading `.glb` models
-- Set `castShadow` and `receiveShadow` on mesh elements that interact with lights
+- All 3D scenes render inside the single `<Canvas>` in `ScrollStage.jsx`; new scene components go in `src/components/three/` and are registered in `stageSequence` (`stagePose.js`) + the `SCENES` map (`MorphRig.jsx`)
+- Always wrap model components with `<Suspense fallback={null}>`; load `.glb` via `useGLTF` from `@react-three/drei` and `useGLTF.preload(path)` at module level
+- Set `castShadow` / `receiveShadow` on meshes that interact with lights
+- **One-way data flow:** the UI writes `stageInputs` (`tab` via `setStageTab`; `journey`/`project` via gsap); `MorphRig`'s `useFrame` reads it and damps toward the target with `MathUtils.damp`. Do not read React state inside `useFrame`
+- The canvas is `pointer-events-none`. To make 3D content clickable, project its world position to screen coordinates each frame into a shared object and overlay a positioned HTML element (see `ProjectCards3D` → `three/projectHotspot.js` → `ProjectHotspot.jsx`)
 
-## Smooth scroll (Button component)
+## Tab navigation conventions
 
-```jsx
-// Correct usage
-<Button text="See my Work" id="button" ele="#work" className="md:w-80 md:h-16" />
-```
+- Tabs are defined in `constants → tabs` (`{ id, label }`) and mapped to section components in `TabView.jsx`'s `PAGES` map — keep the two in sync when adding a tab
+- `App.jsx` owns the active-tab state; every navigator (NavBar, TabProgress, edge-scroll) calls the same `onSelect(tabId)`
+- Section pages receive `onSelect` and `entryDir` props from `TabView`
+- Mark a section as an in-tab scroll target with `data-scroll-stop` + `data-scroll-label="…"`; `TabProgress`'s advance control steps through these before crossing tabs
+- A tab that pages internally (e.g. Journey's role stepper) marks its wrapper `data-manual-edge-nav` and mounts `useEdgeNav({ manual: true, requireEdges: false })`
 
-- `ele` must be a valid CSS selector matching a section `id` in the DOM
-- `id` prop being truthy enables the smooth-scroll override; omit it to use default anchor behaviour
+## GitHub repo feed (Work tab)
 
-## NavBar scroll detection
-
-```js
-useEffect(() => {
-  const handleScroll = () => setScrolled(window.scrollY > 10);
-  window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []); // empty array — register once
-```
-
-The `scrolled` state drives the `.scrolled` / `.not-scrolled` class on the `<header>`.
+- Configured entirely by `constants → github` (`username`, `excludeRepos`, `excludePrefixes`, `maxRepos`); fetched once and cached at module level in `src/hooks/useGithubRepos.js`
+- A curated `projects` entry with a matching `repoName` is filtered out of the live list to avoid duplicates
+- Card preview images come from `opengraph.githubassets.com` (unauthenticated, ~100 req/hr rate limit) — a `429` during heavy local testing is the CDN throttling, not a bug
