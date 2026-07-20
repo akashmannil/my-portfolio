@@ -4,9 +4,16 @@ import MorphRig from './MorphRig';
 import ParticleField from './ParticleField';
 import { isCompact } from './responsive';
 
-const ScrollStage = ({ activeTab }) => {
+// time-of-day lighting so the 3D scenes brighten with the ambient palette
+const AMBIENT_LIGHT = { dawn: 0.6, day: 0.9, dusk: 0.45, night: 0.35 };
+const KEY_COLOR = { dawn: '#ffd9b0', day: '#ffffff', dusk: '#ffb27a', night: '#ffffff' };
+
+const ScrollStage = ({ activeTab, ambient, ambientOn }) => {
   const compact = isCompact();
   const wrap = useRef(null);
+  const live = ambientOn && ambient?.status !== 'off';
+  const ambIntensity = live ? AMBIENT_LIGHT[ambient.timeOfDay] : 0.35;
+  const keyColor = live ? KEY_COLOR[ambient.timeOfDay] : '#ffffff';
 
   // the 3D scene is a top-of-page centrepiece; as the reader scrolls a tab's
   // content it recedes so it never fights the text below the fold. The Work
@@ -33,7 +40,7 @@ const ScrollStage = ({ activeTab }) => {
   return (
     <div
       ref={wrap}
-      className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-300"
+      className="fixed inset-0 z-[1] pointer-events-none transition-opacity duration-300"
     >
       <div className="absolute -top-1/4 -left-1/4 w-[60vw] h-[60vw] rounded-full bg-glacier/5 blur-[120px]" />
       <div className="absolute -bottom-1/4 -right-1/4 w-[55vw] h-[55vw] rounded-full bg-ember/5 blur-[120px]" />
@@ -43,8 +50,8 @@ const ScrollStage = ({ activeTab }) => {
         performance={{ min: 0.5 }}
         gl={{ antialias: !compact, alpha: true, powerPreference: 'high-performance' }}
       >
-        <ambientLight intensity={0.35} />
-        <directionalLight position={[4, 6, 4]} intensity={1.3} />
+        <ambientLight intensity={ambIntensity} />
+        <directionalLight position={[4, 6, 4]} intensity={1.3} color={keyColor} />
         <pointLight position={[-5, -2, -3]} intensity={9} color="#7ad7ff" />
         <pointLight position={[5, -3, 2]} intensity={7} color="#ff6a3d" />
         <Suspense fallback={null}>

@@ -9,6 +9,7 @@ A personal developer portfolio built as an interactive, **tab-based single-page 
 - **Tabbed experience** — one 3D Three.js scene per tab, with GSAP cross-fades between tabs (no long-scroll narrative)
 - **Three ways to navigate** — the nav bar / mobile menu, a persistent progress indicator with an advance button, and "edge scroll" (keep scrolling past a page edge to cross to the next tab)
 - **Live GitHub feed** — the Work tab fetches recent public repos from the GitHub API and renders them alongside hand-picked projects
+- **Ambient "Live" theme** _(opt-in)_ — mirrors your real local time of day and weather: a light, sunny palette by day, dark by night, with rain/snow effects, powered by geolocation + the key-less Open-Meteo API
 - **Interactive 3D** — a floating laptop, desk, rocket "career" stepper, skill solar system, project deck (with clickable "open project" cards) and a contact dish
 - **Contact form** — wired to EmailJS
 - **Responsive & motion-aware** — adapts framing for phone/tablet/desktop and respects `prefers-reduced-motion`

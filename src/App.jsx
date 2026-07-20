@@ -4,8 +4,10 @@ import ScrollStage from './components/three/ScrollStage';
 import TabView from './components/TabView';
 import TabProgress from './components/TabProgress';
 import ProjectHotspot from './components/ProjectHotspot';
+import AmbientSky from './components/AmbientSky';
 import { setStageTab } from './components/three/stagePose';
 import useEdgeNav, { markTabNav } from './hooks/useEdgeNav';
+import useAmbient from './hooks/useAmbient';
 import { tabs } from './constants';
 
 const initialTab = () => {
@@ -19,6 +21,7 @@ const App = () => {
     setStageTab(id);
     return id;
   });
+  const { enabled: ambientOn, toggle: toggleAmbient, ambient } = useAmbient();
 
   const selectTab = (id) => {
     if (id === tab) return;
@@ -36,8 +39,15 @@ const App = () => {
 
   return (
     <div className="grain">
-      <NavBar activeTab={tab} onSelect={selectTab} />
-      <ScrollStage activeTab={tab} />
+      <NavBar
+        activeTab={tab}
+        onSelect={selectTab}
+        ambientOn={ambientOn}
+        onToggleAmbient={toggleAmbient}
+        ambient={ambient}
+      />
+      <ScrollStage activeTab={tab} ambient={ambient} ambientOn={ambientOn} />
+      <AmbientSky enabled={ambientOn} ambient={ambient} />
       <main className="relative z-10">
         <TabView tab={tab} onSelect={selectTab} />
       </main>

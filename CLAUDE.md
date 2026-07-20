@@ -15,13 +15,14 @@ There is **no long-scroll narrative and no ScrollTrigger/Lenis** — the app is 
 - **Three.js / @react-three/fiber** (+ **drei**) — 3D rendering; every Canvas component lives in `src/components/three/`. One fixed `ScrollStage` canvas holds all scenes; the active tab's camera framing/colour lives in `stagePose.js` → `tabPoses`
 - **GSAP 3** (+ `@gsap/react`) — animations use the `useGSAP` hook (never `useEffect`); tab page transitions are driven by `src/components/TabView.jsx`
 - **EmailJS** — contact form; credentials are Vite env vars (`VITE_APP_EMAILJS_*`)
+- **Ambient "Live" mode** — an opt-in navbar toggle that re-themes the app to the user's real local time of day and weather (geolocation + the key-less [Open-Meteo](https://open-meteo.com/) API); see the Ambient section below
 
 ## Architecture
 
 `App.jsx` holds the single source of truth: the active tab id in `useState`. It renders four persistent layers:
 
 | Layer | File | Role |
-|---|---|---|
+| --- | --- | --- |
 | `NavBar` | `src/components/NavBar.jsx` | Top tab bar (desktop) + hamburger menu (mobile); calls `onSelect(tabId)` |
 | `ScrollStage` | `src/components/three/ScrollStage.jsx` | The one fixed R3F canvas (`z-0`, `pointer-events-none`); fades out as a tab scrolls (except Work) |
 | `TabView` | `src/components/TabView.jsx` | Maps the active tab id → section component and cross-fades between them |
@@ -32,7 +33,7 @@ There is **no long-scroll narrative and no ScrollTrigger/Lenis** — the app is 
 Each tab shows one scene, chosen by the `actor` index in its `tabPoses` entry, drawn from `stageSequence` in `stagePose.js`:
 
 | Tab | `actor` | Scene key | Component |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | home | 0 | `laptop` | `FloatingLaptop` |
 | about | 1 | `desk` | `DeskScene` |
 | experience | 2 | `rocket` | `JourneyRocket` |
@@ -54,6 +55,16 @@ Each tab shows one scene, chosen by the `actor` index in its `tabPoses` entry, d
 - The active project the 3D deck shows is tracked by an IntersectionObserver on `.project-card` (plus hover), written to `stageInputs.project`.
 - The canvas is `pointer-events-none`, so the deck's "open project" is made clickable by projecting the active card's screen rect each frame (`ProjectCards3D` → `three/projectHotspot.js`) and overlaying a transparent `<a>` (`ProjectHotspot.jsx`). **To make any other 3D element clickable, reuse this projection-overlay pattern — do not give the canvas pointer events** (it would swallow all page clicks/scroll).
 
+### Ambient "Live" mode
+
+Off by default; toggled from the navbar (`AmbientToggle`). When on, `src/hooks/useAmbient.js`:
+
+- Requests **geolocation** (rounded to ~1km) and fetches current conditions from **Open-Meteo** (no API key); refreshes weather every 10 min and re-checks the clock every minute. Denied/failed location → **time-only** mode (palette from the local clock, no weather).
+- Classifies the local hour into `dawn / day / dusk / night` and the WMO code into `clear / clouds / fog / rain / snow / storm`.
+- Applies a per-time-of-day palette by overriding the `@theme` colour tokens as inline CSS variables on `<html>` (day/dawn flip to a light theme). Toggling off removes the overrides, reverting to the default dark theme. State persists in `localStorage`.
+
+The weather visuals are a canvas overlay, `src/components/AmbientSky.jsx` (sun/moon + rain/snow/cloud veil; precipitation colour adapts to the light/dark palette; respects `prefers-reduced-motion`), and `ScrollStage` brightens its lights toward daytime. **The performance disclaimer in `AmbientToggle` is required — keep it** (the mode runs continuous canvas + 3D work).
+
 ## Coding Standards
 
 See `.claude/rules/` for detailed rules. Short version:
@@ -68,7 +79,7 @@ See `.claude/rules/` for detailed rules. Short version:
 ## Common Tasks
 
 | Task | Where to look |
-|---|---|
+| --- | --- |
 | Add/rename/reorder tabs | `src/constants/index.js` → `tabs` (rendered by `NavBar`/`TabProgress`, mapped to pages in `TabView.jsx`) |
 | Tune the GitHub repo feed (Work tab) | `src/constants/index.js` → `github` (username, `excludeRepos`, `excludePrefixes`, `maxRepos`; fetched by `src/hooks/useGithubRepos.js`) |
 | Add/edit experience | `src/constants/index.js` → `expCards` (rendered by `src/sections/Journey.jsx`; `brand` is the short wordmark printed on the rocket hull) |
@@ -81,6 +92,8 @@ See `.claude/rules/` for detailed rules. Short version:
 | Change social links | `src/constants/index.js` → `socialImgs` |
 | Change the résumé file | `src/constants/index.js` → `resumeFile` (+ file in `public/`) |
 | Change theme colours / fonts | `src/index.css` → `@theme` tokens |
+| Adjust ambient time-of-day palettes / weather mapping | `src/hooks/useAmbient.js` (`PALETTES`, `weatherFromCode`) |
+| Adjust ambient sky/weather visuals | `src/components/AmbientSky.jsx` |
 | Tune per-tab 3D framing / colour | `src/components/three/stagePose.js` → `tabPoses` |
 | Adjust the nav indicator / advance control | `src/components/TabProgress.jsx` |
 | Adjust edge-scroll tab crossing | `src/hooks/useEdgeNav.js` |
@@ -99,11 +112,13 @@ npm run lint     # ESLint check
 
 Required — create `.env` at project root:
 
-```
+```env
 VITE_APP_EMAILJS_SERVICE_ID=
 VITE_APP_EMAILJS_TEMPLATE_ID=
 VITE_APP_EMAILJS_PUBLIC_KEY=
 ```
+
+(No key is needed for the weather feed — Ambient mode uses the free Open-Meteo API.)
 
 ## What NOT to do
 

@@ -30,6 +30,11 @@ body {
   font-family: var(--font-sans);
 }
 
+/* smooth the swap between ambient time-of-day palettes */
+body {
+  transition: background-color 0.6s ease, color 0.6s ease;
+}
+
 ::selection {
   background: var(--color-accent);
   color: var(--color-ink);

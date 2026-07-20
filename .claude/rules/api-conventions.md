@@ -62,3 +62,10 @@ useGSAP(() => {
 - Configured entirely by `constants → github` (`username`, `excludeRepos`, `excludePrefixes`, `maxRepos`); fetched once and cached at module level in `src/hooks/useGithubRepos.js`
 - A curated `projects` entry with a matching `repoName` is filtered out of the live list to avoid duplicates
 - Card preview images come from `opengraph.githubassets.com` (unauthenticated, ~100 req/hr rate limit) — a `429` during heavy local testing is the CDN throttling, not a bug
+
+## Ambient "Live" mode
+
+- Themes are swapped by overriding the `@theme` colour tokens as inline CSS custom properties on `document.documentElement` (`useAmbient.js` → `applyPalette` / `clearPalette`). This works because every component uses the semantic tokens (`bg-ink`, `text-paper`, …) which resolve to `var(--color-*)`. Add new palettes to `PALETTES` keyed by time-of-day; keep the token set in sync with `index.css`
+- The feature is opt-in and must stay off until toggled — do not fetch geolocation/weather on load. Persist the toggle in `localStorage` under `ambient`
+- Use **Open-Meteo** (`api.open-meteo.com`, no key, CORS-enabled) for weather; round coordinates before sending; always degrade to time-only on permission-denied/fetch-failure
+- Keep the performance disclaimer in `AmbientToggle`; weather visuals belong in the `AmbientSky` canvas (respect `prefers-reduced-motion`), not in new always-on DOM

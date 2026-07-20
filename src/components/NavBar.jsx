@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import AmbientToggle from './AmbientToggle';
 import { tabs, resumeFile } from '../constants';
 
-const NavBar = ({ activeTab, onSelect }) => {
+const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient }) => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -49,7 +50,13 @@ const NavBar = ({ activeTab, onSelect }) => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
+          <AmbientToggle
+            variant="desktop"
+            enabled={ambientOn}
+            onToggle={onToggleAmbient}
+            ambient={ambient}
+          />
           <a
             href={resumeFile}
             download
@@ -105,6 +112,12 @@ const NavBar = ({ activeTab, onSelect }) => {
           >
             Download Resume
           </a>
+          <AmbientToggle
+            variant="mobile"
+            enabled={ambientOn}
+            onToggle={onToggleAmbient}
+            ambient={ambient}
+          />
         </nav>
       </div>
     </header>
