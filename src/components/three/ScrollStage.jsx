@@ -8,12 +8,23 @@ import { isCompact } from './responsive';
 const AMBIENT_LIGHT = { dawn: 0.6, day: 0.9, dusk: 0.45, night: 0.35 };
 const KEY_COLOR = { dawn: '#ffd9b0', day: '#ffffff', dusk: '#ffb27a', night: '#ffffff' };
 
+// the scene materials/glows are tuned to pop against black; on the light
+// daytime palettes they read as neon, so grade the whole stage down —
+// applied to the canvas layer only, never the UI
+const CANVAS_FILTER = {
+  dawn: 'saturate(0.8) brightness(1.05)',
+  day: 'saturate(0.62) brightness(1.1) contrast(0.95)',
+  dusk: 'saturate(0.92)',
+  night: 'none',
+};
+
 const ScrollStage = ({ activeTab, ambient, ambientOn }) => {
   const compact = isCompact();
   const wrap = useRef(null);
   const live = ambientOn && ambient?.status !== 'off';
   const ambIntensity = live ? AMBIENT_LIGHT[ambient.timeOfDay] : 0.35;
   const keyColor = live ? KEY_COLOR[ambient.timeOfDay] : '#ffffff';
+  const filter = live ? CANVAS_FILTER[ambient.timeOfDay] : 'none';
 
   // the 3D scene is a top-of-page centrepiece; as the reader scrolls a tab's
   // content it recedes so it never fights the text below the fold. The Work
@@ -40,7 +51,8 @@ const ScrollStage = ({ activeTab, ambient, ambientOn }) => {
   return (
     <div
       ref={wrap}
-      className="fixed inset-0 z-[1] pointer-events-none transition-opacity duration-300"
+      style={{ filter }}
+      className="fixed inset-0 z-[1] pointer-events-none transition-[opacity,filter] duration-500"
     >
       <div className="absolute -top-1/4 -left-1/4 w-[60vw] h-[60vw] rounded-full bg-glacier/5 blur-[120px]" />
       <div className="absolute -bottom-1/4 -right-1/4 w-[55vw] h-[55vw] rounded-full bg-ember/5 blur-[120px]" />
