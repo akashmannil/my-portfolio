@@ -2,6 +2,7 @@ import { useState } from 'react';
 import NavBar from './components/NavBar';
 import ScrollStage from './components/three/ScrollStage';
 import TabView from './components/TabView';
+import TabProgress from './components/TabProgress';
 import { setStageTab } from './components/three/stagePose';
 import useEdgeNav, { markTabNav } from './hooks/useEdgeNav';
 import { tabs } from './constants';
@@ -35,10 +36,11 @@ const App = () => {
   return (
     <div className="grain">
       <NavBar activeTab={tab} onSelect={selectTab} />
-      <ScrollStage />
+      <ScrollStage activeTab={tab} />
       <main className="relative z-10">
         <TabView tab={tab} onSelect={selectTab} />
       </main>
+      <TabProgress activeTab={tab} onSelect={selectTab} />
     </div>
   );
 };

@@ -1,12 +1,11 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import CountUp from 'react-countup';
-import NextChapter from '../components/NextChapter';
 import { manifesto, counterItems } from '../constants';
 
 const ACCENT_WORDS = ['effortless.', 'feel?', 'craft,', 'calm,', 'curiosity'];
 
-const About = ({ onSelect }) => {
+const About = () => {
   useGSAP(() => {
     gsap.to('.m-word', {
       opacity: 1,
@@ -53,7 +52,6 @@ const About = ({ onSelect }) => {
           </div>
         ))}
       </div>
-      <NextChapter current="about" onSelect={onSelect} className="mt-14" />
     </section>
   );
 };

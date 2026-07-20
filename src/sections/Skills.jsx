@@ -1,12 +1,11 @@
 import { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import NextChapter from '../components/NextChapter';
 import { skillRows } from '../constants';
 
 const ROW_STYLES = ['text-paper', 'text-outline', 'text-fog/60'];
 
-const Skills = ({ onSelect }) => {
+const Skills = () => {
   const sectionRef = useRef(null);
 
   useGSAP(
@@ -51,9 +50,6 @@ const Skills = ({ onSelect }) => {
             ))}
           </div>
         ))}
-      </div>
-      <div className="px-5 md:px-16 mt-16 md:mt-24">
-        <NextChapter current="skills" onSelect={onSelect} />
       </div>
     </section>
   );

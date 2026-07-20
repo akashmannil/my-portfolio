@@ -1,13 +1,15 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import NextChapter from '../components/NextChapter';
 import RepoCard from '../components/RepoCard';
 import useGithubRepos from '../hooks/useGithubRepos';
 import { stageInputs } from '../components/three/stagePose';
 import { projects, github } from '../constants';
 
-const Projects = ({ onSelect }) => {
+const focusProject = (i) =>
+  gsap.to(stageInputs, { project: i, duration: 0.7, ease: 'power2.out', overwrite: true });
+
+const Projects = () => {
   const sectionRef = useRef(null);
   const { repos, status } = useGithubRepos();
 
@@ -35,23 +37,38 @@ const Projects = ({ onSelect }) => {
     { scope: sectionRef, dependencies: [repos] }
   );
 
-  const focusCard = (i) =>
-    gsap.to(stageInputs, { project: Math.min(i, 2), duration: 0.8, ease: 'power2.out' });
+  // keep the 3D deck showing whichever project sits in the reading band
+  useEffect(() => {
+    const cards = sectionRef.current.querySelectorAll('.project-card');
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) focusProject(Number(e.target.dataset.index));
+        });
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    );
+    cards.forEach((c) => obs.observe(c));
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <section id="work" ref={sectionRef} className="relative px-5 md:px-16 pt-32 md:pt-40 pb-24">
       <p className="eyebrow mb-3">Selected work</p>
-      <h2 className="display-section mb-16 md:mb-24">
+      <h2 className="display-section mb-16 md:mb-24 max-w-2xl">
         Built, shipped, <span className="serif-accent text-glacier">loved.</span>
       </h2>
-      <div className="space-y-24 md:space-y-32">
+      <div className="space-y-24 md:space-y-32 xl:max-w-4xl">
         {projects.map((project, i) => (
           <a
             key={project.title}
             href={project.url}
             target="_blank"
             rel="noreferrer"
-            onMouseEnter={() => focusCard(i)}
+            data-index={i}
+            data-scroll-stop
+            data-scroll-label={project.title}
+            onMouseEnter={() => focusProject(i)}
             className={`project-card group grid md:grid-cols-12 gap-8 items-center ${
               i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''
             }`}
@@ -86,7 +103,7 @@ const Projects = ({ onSelect }) => {
         ))}
       </div>
 
-      <div className="mt-28 md:mt-36">
+      <div className="mt-28 md:mt-36 xl:max-w-4xl" data-scroll-stop data-scroll-label="Latest commits">
         <p className="eyebrow mb-3">Fresh from GitHub</p>
         <h3 className="display-section mb-6">
           Latest <span className="serif-accent text-accent">commits.</span>
@@ -129,8 +146,6 @@ const Projects = ({ onSelect }) => {
           </a>
         )}
       </div>
-
-      <NextChapter current="work" onSelect={onSelect} className="mt-20" />
     </section>
   );
 };

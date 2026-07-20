@@ -1,9 +1,8 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import NextChapter from '../components/NextChapter';
 import { heroCopy } from '../constants';
 
-const Hero = ({ onSelect }) => {
+const Hero = () => {
   useGSAP(() => {
     gsap
       .timeline({ defaults: { ease: 'power3.out' } })
@@ -19,9 +18,9 @@ const Hero = ({ onSelect }) => {
         '-=1.1'
       )
       .fromTo(
-        '.hero-sub, .hero-cue',
+        '.hero-sub',
         { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.9, stagger: 0.15 },
+        { opacity: 1, y: 0, duration: 0.9 },
         '-=0.5'
       );
   }, []);
@@ -48,9 +47,6 @@ const Hero = ({ onSelect }) => {
       <p className="hero-sub max-w-xl mt-10 text-fog text-lg md:text-xl font-light leading-relaxed">
         {heroCopy.sub}
       </p>
-      <div className="hero-cue absolute bottom-10 left-5 md:left-16">
-        <NextChapter current="home" onSelect={onSelect} />
-      </div>
     </section>
   );
 };

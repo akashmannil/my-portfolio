@@ -13,7 +13,7 @@ const tabPoses = {
   about: { actor: 1, x: 2.1, y: -0.05, scale: 0.85, rx: 0.24, ry: -0.55, ...rgb('#c9f24b') },
   experience: { actor: 2, x: -2.4, y: -0.35, scale: 0.95, rx: 0.05, ry: 0.2, ...rgb('#ff6a3d') },
   skills: { actor: 3, x: 0, y: -0.9, scale: 0.8, rx: 0.2, ry: 0, ...rgb('#f4f2ec') },
-  work: { actor: 4, x: 2.8, y: -0.4, scale: 0.75, rx: 0.05, ry: -0.35, ...rgb('#7ad7ff') },
+  work: { actor: 4, x: 2.1, y: 0.15, scale: 0.9, rx: 0.05, ry: -0.28, ...rgb('#7ad7ff') },
   contact: { actor: 6, x: -2.0, y: -0.85, scale: 0.62, rx: 0.12, ry: 0.3, ...rgb('#7ad7ff') },
 };
 
