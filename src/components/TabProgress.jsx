@@ -91,24 +91,38 @@ const TabProgress = ({ activeTab, onSelect }) => {
         ))}
       </nav>
 
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex sm:hidden items-center gap-2">
-        {tabs.map((t, i) => (
-          <button
-            key={t.id}
-            onClick={() => onSelect(t.id)}
-            aria-label={t.label}
-            className={`h-1.5 rounded-full transition-all duration-500 ${
-              i === index ? 'w-6 bg-accent' : 'w-1.5 bg-white/25'
-            }`}
-          />
-        ))}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex sm:hidden items-center gap-3 rounded-full border border-line bg-ink/70 backdrop-blur-md px-3.5 py-2">
+        <div className="flex items-center gap-1.5">
+          {tabs.map((t, i) => (
+            <button
+              key={t.id}
+              onClick={() => onSelect(t.id)}
+              aria-label={t.label}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                i === index ? 'w-5 bg-accent' : 'w-1.5 bg-white/30'
+              }`}
+            />
+          ))}
+        </div>
+        {showNext && (
+          <>
+            <span className="w-px h-4 bg-line" />
+            <button
+              onClick={handleAdvance}
+              aria-label={scrolling ? `Scroll to ${label}` : isLast ? 'Back to start' : `Go to ${label}`}
+              className="flex h-5 w-5 items-center justify-center rounded-full text-fog"
+            >
+              <span className="animate-bounce text-sm leading-none">{chevron}</span>
+            </button>
+          </>
+        )}
       </div>
 
       {showNext && (
         <button
           onClick={handleAdvance}
           aria-label={scrolling ? `Scroll to ${label}` : isLast ? 'Back to start' : `Go to ${label}`}
-          className="group fixed bottom-6 right-5 md:right-8 z-40 flex items-center gap-3 rounded-full border border-line bg-ink/70 backdrop-blur-md pl-5 pr-2 py-2 hover:border-accent transition-all duration-300"
+          className="group fixed bottom-6 right-5 md:right-8 z-40 hidden sm:flex items-center gap-3 rounded-full border border-line bg-ink/70 backdrop-blur-md pl-5 pr-2 py-2 hover:border-accent transition-all duration-300"
         >
           <span className="flex flex-col items-end leading-none">
             <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-fog/60">

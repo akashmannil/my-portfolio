@@ -3,6 +3,7 @@ import NavBar from './components/NavBar';
 import ScrollStage from './components/three/ScrollStage';
 import TabView from './components/TabView';
 import TabProgress from './components/TabProgress';
+import ProjectHotspot from './components/ProjectHotspot';
 import { setStageTab } from './components/three/stagePose';
 import useEdgeNav, { markTabNav } from './hooks/useEdgeNav';
 import { tabs } from './constants';
@@ -41,6 +42,7 @@ const App = () => {
         <TabView tab={tab} onSelect={selectTab} />
       </main>
       <TabProgress activeTab={tab} onSelect={selectTab} />
+      <ProjectHotspot activeTab={tab} />
     </div>
   );
 };

@@ -1,11 +1,18 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { MathUtils } from 'three';
+import { MathUtils, Vector3 } from 'three';
 import DataPanel from './DataPanel';
-import { projectFocus } from './stagePose';
+import { projectFocus, stageInputs } from './stagePose';
+import { projectHotspot } from './projectHotspot';
 import { projects } from '../../constants';
 
 const COLORS = ['#7ad7ff', '#c9f24b', '#ff6a3d'];
+
+// card front-face half extents (boxGeometry 1.12 x 0.8)
+const HW = 0.56;
+const HH = 0.4;
+const FRONT_Z = 0.05;
+const corner = new Vector3();
 
 // a fanned deck: the active project sits front-and-centre facing the camera,
 // the rest recede behind it, angled and dimmed
@@ -16,6 +23,8 @@ const ProjectCards3D = () => {
   useFrame((state, delta) => {
     const focus = projectFocus();
     const t = state.clock.elapsedTime;
+    const active = Math.round(MathUtils.clamp(focus, 0, projects.length - 1));
+
     cards.current.forEach((card, i) => {
       if (!card) return;
       const d = i - focus;
@@ -34,8 +43,41 @@ const ProjectCards3D = () => {
       card.rotation.y = MathUtils.damp(card.rotation.y, targetRotY, 6, delta);
       card.scale.setScalar(MathUtils.damp(card.scale.x, targetScale, 6, delta));
       card.visible = ad < 2.4;
-      if (glows.current[i]) glows.current[i].material.opacity = 0.05 + near * 0.45;
+      if (glows.current[i]) {
+        const boost = projectHotspot.hover && i === active ? 0.35 : 0;
+        glows.current[i].material.opacity = 0.05 + near * 0.45 + boost;
+      }
     });
+
+    // project the active card's screen rect for the clickable HTML overlay
+    const card = cards.current[active];
+    if (stageInputs.tab === 'work' && card && card.scale.x > 0.6) {
+      card.updateWorldMatrix(true, false);
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      for (const sx of [-1, 1]) {
+        for (const sy of [-1, 1]) {
+          corner.set(sx * HW, sy * HH, FRONT_Z);
+          card.localToWorld(corner).project(state.camera);
+          const px = (corner.x * 0.5 + 0.5) * state.size.width;
+          const py = (-corner.y * 0.5 + 0.5) * state.size.height;
+          minX = Math.min(minX, px);
+          maxX = Math.max(maxX, px);
+          minY = Math.min(minY, py);
+          maxY = Math.max(maxY, py);
+        }
+      }
+      projectHotspot.left = minX;
+      projectHotspot.top = minY;
+      projectHotspot.width = maxX - minX;
+      projectHotspot.height = maxY - minY;
+      projectHotspot.index = active;
+      projectHotspot.visible = true;
+    } else {
+      projectHotspot.visible = false;
+    }
   });
 
   return (
