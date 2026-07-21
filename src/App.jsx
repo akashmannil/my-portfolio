@@ -21,7 +21,7 @@ const App = () => {
     setStageTab(id);
     return id;
   });
-  const { enabled: ambientOn, toggle: toggleAmbient, ambient } = useAmbient();
+  const { enabled: ambientOn, toggle: toggleAmbient, ambient, manual, setManual } = useAmbient();
 
   const selectTab = (id) => {
     if (id === tab) return;
@@ -45,6 +45,8 @@ const App = () => {
         ambientOn={ambientOn}
         onToggleAmbient={toggleAmbient}
         ambient={ambient}
+        manual={manual}
+        onManualChange={setManual}
       />
       <ScrollStage activeTab={tab} ambient={ambient} ambientOn={ambientOn} />
       <AmbientSky enabled={ambientOn} ambient={ambient} />

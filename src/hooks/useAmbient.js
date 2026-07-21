@@ -5,7 +5,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 // dark theme
 const TOKENS = ['ink', 'ink-soft', 'line', 'fog', 'paper', 'accent', 'ember', 'glacier'];
 
-// one palette per time-of-day. Daylight palettes flip to dark-on-light and use
+// selectable options for the manual override (order = clock order)
+export const AMBIENT_PHASES = ['dawn', 'day', 'afternoon', 'dusk', 'night'];
+export const AMBIENT_WEATHERS = ['clear', 'clouds', 'fog', 'rain', 'snow', 'storm'];
+
+const LIGHT_PHASES = ['dawn', 'day', 'afternoon'];
+
+// one palette per phase. Daylight palettes flip to dark-on-light and use
 // deeper accent hues so lime/orange/blue stay legible on pale backgrounds.
 const PALETTES = {
   dawn: {
@@ -15,6 +21,10 @@ const PALETTES = {
   day: {
     ink: '#f4f1ea', 'ink-soft': '#ffffff', line: '#dbd6c9', fog: '#6c6c74',
     paper: '#17171b', accent: '#5f8b0f', ember: '#d9541f', glacier: '#1f8ec8',
+  },
+  afternoon: {
+    ink: '#f7efdb', 'ink-soft': '#fffdf3', line: '#e6dabd', fog: '#7c7157',
+    paper: '#1d1710', accent: '#5f8b0f', ember: '#d9541f', glacier: '#1f8ec8',
   },
   dusk: {
     ink: '#17111e', 'ink-soft': '#211829', line: '#382a43', fog: '#b6a0ad',
@@ -26,8 +36,10 @@ const PALETTES = {
   },
 };
 
-const timeOfDay = (h) =>
-  h < 5 ? 'night' : h < 8 ? 'dawn' : h < 17 ? 'day' : h < 20 ? 'dusk' : 'night';
+const phaseFromHour = (h) =>
+  h < 5 ? 'night' : h < 8 ? 'dawn' : h < 12 ? 'day' : h < 17 ? 'afternoon' : h < 20 ? 'dusk' : 'night';
+
+const isDayPhase = (p) => p !== 'night';
 
 // Open-Meteo WMO weather codes → the effect categories AmbientSky draws
 const weatherFromCode = (code) => {
@@ -44,7 +56,7 @@ const applyPalette = (name) => {
   const p = PALETTES[name];
   const s = document.documentElement.style;
   for (const t of TOKENS) s.setProperty(`--color-${t}`, p[t]);
-  s.colorScheme = name === 'day' || name === 'dawn' ? 'light' : 'dark';
+  s.colorScheme = LIGHT_PHASES.includes(name) ? 'light' : 'dark';
 };
 
 const clearPalette = () => {
@@ -53,13 +65,28 @@ const clearPalette = () => {
   s.removeProperty('color-scheme');
 };
 
+const readManual = () => {
+  try {
+    const m = JSON.parse(localStorage.getItem('ambient-manual') || '{}');
+    return {
+      time: AMBIENT_PHASES.includes(m.time) ? m.time : 'auto',
+      weather: AMBIENT_WEATHERS.includes(m.weather) ? m.weather : 'auto',
+    };
+  } catch {
+    return { time: 'auto', weather: 'auto' };
+  }
+};
+
 const OFF = { status: 'off', timeOfDay: 'night', weather: 'clear', isDay: false };
 
 const useAmbient = () => {
   const [enabled, setEnabled] = useState(() => localStorage.getItem('ambient') === 'on');
+  const [manual, setManualState] = useState(readManual);
   const [ambient, setAmbient] = useState(OFF);
   const coords = useRef(null);
   const weather = useRef({ weather: 'clear', isDay: null, status: 'timeonly' });
+
+  const { time: manualTime, weather: manualWeather } = manual;
 
   useEffect(() => {
     if (!enabled) {
@@ -68,18 +95,21 @@ const useAmbient = () => {
       return;
     }
     let cancelled = false;
+    const autoWeather = manualWeather === 'auto';
 
     const paint = () => {
       if (cancelled) return;
-      const tod = timeOfDay(new Date().getHours());
-      applyPalette(tod);
+      const phase = manualTime !== 'auto' ? manualTime : phaseFromHour(new Date().getHours());
+      applyPalette(phase);
       const w = weather.current;
-      setAmbient({
-        status: w.status,
-        timeOfDay: tod,
-        weather: w.weather,
-        isDay: w.isDay == null ? tod !== 'night' : w.isDay,
-      });
+      const eff = autoWeather ? w.weather : manualWeather;
+      const isDay =
+        manualTime !== 'auto'
+          ? isDayPhase(phase)
+          : w.isDay == null
+            ? isDayPhase(phase)
+            : w.isDay;
+      setAmbient({ status: autoWeather ? w.status : 'ready', timeOfDay: phase, weather: eff, isDay });
     };
 
     const fetchWeather = async () => {
@@ -103,29 +133,34 @@ const useAmbient = () => {
     };
 
     paint();
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          // round to ~1km — enough for weather, avoids storing precise coords
-          coords.current = {
-            lat: pos.coords.latitude.toFixed(2),
-            lon: pos.coords.longitude.toFixed(2),
-          };
-          fetchWeather();
-        },
-        () => {},
-        { timeout: 8000, maximumAge: 10 * 60 * 1000 }
-      );
+    // only touch geolocation/network when weather is on Auto
+    if (autoWeather && navigator.geolocation) {
+      if (coords.current) {
+        fetchWeather();
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            // round to ~1km — enough for weather, avoids storing precise coords
+            coords.current = {
+              lat: pos.coords.latitude.toFixed(2),
+              lon: pos.coords.longitude.toFixed(2),
+            };
+            fetchWeather();
+          },
+          () => {},
+          { timeout: 8000, maximumAge: 10 * 60 * 1000 }
+        );
+      }
     }
 
     const clock = setInterval(paint, 60 * 1000);
-    const wx = setInterval(fetchWeather, 10 * 60 * 1000);
+    const wx = autoWeather ? setInterval(fetchWeather, 10 * 60 * 1000) : null;
     return () => {
       cancelled = true;
       clearInterval(clock);
-      clearInterval(wx);
+      if (wx) clearInterval(wx);
     };
-  }, [enabled]);
+  }, [enabled, manualTime, manualWeather]);
 
   const toggle = useCallback(() => {
     setEnabled((e) => {
@@ -135,7 +170,15 @@ const useAmbient = () => {
     });
   }, []);
 
-  return { enabled, toggle, ambient };
+  const setManual = useCallback((partial) => {
+    setManualState((prev) => {
+      const next = { ...prev, ...partial };
+      localStorage.setItem('ambient-manual', JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  return { enabled, toggle, ambient, manual, setManual };
 };
 
 export default useAmbient;

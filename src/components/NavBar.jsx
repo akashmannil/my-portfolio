@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import AmbientToggle from './AmbientToggle';
 import { tabs, resumeFile } from '../constants';
 
-const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient }) => {
+const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient, manual, onManualChange }) => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -56,6 +56,8 @@ const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient }) =>
             enabled={ambientOn}
             onToggle={onToggleAmbient}
             ambient={ambient}
+            manual={manual}
+            onManualChange={onManualChange}
           />
           <a
             href={resumeFile}
@@ -85,8 +87,8 @@ const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient }) =>
       </div>
 
       <div
-        className={`lg:hidden absolute top-full inset-x-0 bg-ink/95 backdrop-blur-md border-b border-line overflow-hidden transition-all duration-500 ${
-          open ? 'max-h-[70vh] opacity-100' : 'max-h-0 opacity-0'
+        className={`lg:hidden absolute top-full inset-x-0 bg-ink/95 backdrop-blur-md border-b border-line transition-all duration-500 ${
+          open ? 'max-h-[85vh] opacity-100 overflow-y-auto' : 'max-h-0 opacity-0 overflow-hidden'
         }`}
       >
         <nav className="flex flex-col px-5 py-6 gap-1">
@@ -117,6 +119,8 @@ const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient }) =>
             enabled={ambientOn}
             onToggle={onToggleAmbient}
             ambient={ambient}
+            manual={manual}
+            onManualChange={onManualChange}
           />
         </nav>
       </div>

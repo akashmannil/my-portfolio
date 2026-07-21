@@ -57,13 +57,13 @@ Each tab shows one scene, chosen by the `actor` index in its `tabPoses` entry, d
 
 ### Ambient "Live" mode
 
-Off by default; toggled from the navbar (`AmbientToggle`). When on, `src/hooks/useAmbient.js`:
+Off by default; toggled and configured from the navbar settings popover (`AmbientToggle` — a desktop popover / mobile menu block with **Time** and **Weather** selects). When on, `src/hooks/useAmbient.js`:
 
-- Requests **geolocation** (rounded to ~1km) and fetches current conditions from **Open-Meteo** (no API key); refreshes weather every 10 min and re-checks the clock every minute. Denied/failed location → **time-only** mode (palette from the local clock, no weather).
-- Classifies the local hour into `dawn / day / dusk / night` and the WMO code into `clear / clouds / fog / rain / snow / storm`.
-- Applies a per-time-of-day palette by overriding the `@theme` colour tokens as inline CSS variables on `<html>` (day/dawn flip to a light theme). Toggling off removes the overrides, reverting to the default dark theme. State persists in `localStorage`.
+- Classifies the local hour into five phases `dawn / day / afternoon / dusk / night` and the Open-Meteo WMO code into `clear / clouds / fog / rain / snow / storm`.
+- Applies a per-phase palette by overriding the `@theme` colour tokens as inline CSS variables on `<html>` (dawn/day/afternoon flip to light themes; dusk/night stay dark). Toggling off removes the overrides, reverting to the default dark theme. Phase and manual overrides persist in `localStorage` (`ambient`, `ambient-manual`).
+- **Auto vs manual:** each of Time/Weather defaults to `Auto`. Auto weather requests **geolocation** (rounded to ~1km) and fetches **Open-Meteo** (no API key; refreshes every 10 min, clock re-checked each minute); denied/failed → **time-only** (palette from the clock, no weather). Setting Time or Weather to a specific value overrides Auto — and if Weather is manual, geolocation/network is never touched. The exported `AMBIENT_PHASES` / `AMBIENT_WEATHERS` drive the selects.
 
-The weather visuals are a canvas overlay, `src/components/AmbientSky.jsx` (sun/moon + rain/snow/cloud veil; precipitation colour adapts to the light/dark palette; respects `prefers-reduced-motion`), and `ScrollStage` brightens its lights toward daytime. **The performance disclaimer in `AmbientToggle` is required — keep it** (the mode runs continuous canvas + 3D work).
+Weather visuals are a canvas overlay, `src/components/AmbientSky.jsx` (sun/moon dimmed under overcast, per-condition sky veil, rain/snow whose colour adapts to the light/dark palette, storm lightning; respects `prefers-reduced-motion`). `ScrollStage` also, per phase, brightens its lights and applies a `CANVAS_FILTER` colour-grade to the 3D layer so the models don't read as neon on light palettes. **The performance disclaimer in `AmbientToggle` is required — keep it** (the mode runs continuous canvas + 3D work). When adding a phase, update the palette in `useAmbient` AND the `AMBIENT_LIGHT` / `KEY_COLOR` / `CANVAS_FILTER` maps in `ScrollStage` and `ORB_Y` in `AmbientSky`.
 
 ## Coding Standards
 

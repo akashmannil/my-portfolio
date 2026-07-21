@@ -65,7 +65,8 @@ useGSAP(() => {
 
 ## Ambient "Live" mode
 
-- Themes are swapped by overriding the `@theme` colour tokens as inline CSS custom properties on `document.documentElement` (`useAmbient.js` → `applyPalette` / `clearPalette`). This works because every component uses the semantic tokens (`bg-ink`, `text-paper`, …) which resolve to `var(--color-*)`. Add new palettes to `PALETTES` keyed by time-of-day; keep the token set in sync with `index.css`
-- The feature is opt-in and must stay off until toggled — do not fetch geolocation/weather on load. Persist the toggle in `localStorage` under `ambient`
-- Use **Open-Meteo** (`api.open-meteo.com`, no key, CORS-enabled) for weather; round coordinates before sending; always degrade to time-only on permission-denied/fetch-failure
+- Themes are swapped by overriding the `@theme` colour tokens as inline CSS custom properties on `document.documentElement` (`useAmbient.js` → `applyPalette` / `clearPalette`). This works because every component uses the semantic tokens (`bg-ink`, `text-paper`, …) which resolve to `var(--color-*)`. Palettes are keyed by the five phases in `AMBIENT_PHASES`; keep the token set in sync with `index.css`
+- Time and Weather each support an `Auto` value plus manual overrides (`AMBIENT_PHASES` / `AMBIENT_WEATHERS`, exported for the `AmbientToggle` selects); the effective value = manual if set, else auto. `localStorage`: `ambient` (on/off), `ambient-manual` (`{ time, weather }`)
+- The feature is opt-in and must stay off until toggled — do not fetch geolocation/weather on load, and only when **Weather is on Auto**. Use **Open-Meteo** (`api.open-meteo.com`, no key, CORS-enabled); round coordinates before sending; always degrade to time-only on permission-denied/fetch-failure
+- Adding a phase means updating `PALETTES` (useAmbient) + `AMBIENT_LIGHT`/`KEY_COLOR`/`CANVAS_FILTER` (ScrollStage) + `ORB_Y` (AmbientSky) together
 - Keep the performance disclaimer in `AmbientToggle`; weather visuals belong in the `AmbientSky` canvas (respect `prefers-reduced-motion`), not in new always-on DOM

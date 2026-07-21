@@ -1,8 +1,25 @@
 import { useEffect, useRef } from 'react';
 import { prefersReducedMotion } from './three/responsive';
 
-// canvas backdrop (behind page content, over the 3D stage) that paints a
-// sun/moon plus live precipitation, driven by the ambient weather state
+const LIGHT_PHASES = ['dawn', 'day', 'afternoon'];
+
+// translucent sky wash per overcast condition
+const VEILS = {
+  clouds: 'rgba(120,126,140,0.13)',
+  storm: 'rgba(84,90,106,0.22)',
+  fog: 'rgba(186,190,200,0.16)',
+  rain: 'rgba(118,128,148,0.10)',
+  snow: 'rgba(205,214,228,0.10)',
+};
+
+// how much of the sun/moon shows through the weather
+const ORB_ALPHA = { clear: 1, clouds: 0.5, fog: 0.32, rain: 0.42, snow: 0.55, storm: 0.28 };
+
+// vertical position of the orb by phase (rising/overhead/setting)
+const ORB_Y = { dawn: 0.28, day: 0.16, afternoon: 0.2, dusk: 0.3, night: 0.18 };
+
+// canvas backdrop (behind the 3D stage) that paints a sun/moon plus live
+// precipitation, driven by the ambient weather state
 const AmbientSky = ({ enabled, ambient }) => {
   const ref = useRef(null);
   const { weather, isDay, status, timeOfDay } = ambient;
@@ -13,13 +30,15 @@ const AmbientSky = ({ enabled, ambient }) => {
     const ctx = canvas.getContext('2d');
     const reduced = prefersReducedMotion();
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    // precipitation needs opposite contrast on the light daytime palettes
-    const lightBg = timeOfDay === 'day' || timeOfDay === 'dawn';
+    const lightBg = LIGHT_PHASES.includes(timeOfDay);
     const rainColor = lightBg ? 'rgba(58,92,132,0.5)' : 'rgba(168,198,228,0.42)';
     const snowColor = lightBg ? 'rgba(92,112,148,0.8)' : 'rgba(242,246,255,0.82)';
+    const veil = VEILS[weather];
+    const orbAlpha = ORB_ALPHA[weather] ?? 1;
     let w = 0;
     let h = 0;
     let raf = 0;
+    let flash = 0;
 
     const resize = () => {
       w = window.innerWidth;
@@ -47,8 +66,10 @@ const AmbientSky = ({ enabled, ambient }) => {
 
     const paintOrb = () => {
       const cx = w * 0.8;
-      const cy = h * 0.2;
+      const cy = h * (ORB_Y[timeOfDay] ?? 0.2);
       const R = Math.min(w, h) * 0.1;
+      ctx.save();
+      ctx.globalAlpha = orbAlpha;
       const halo = ctx.createRadialGradient(cx, cy, R * 0.2, cx, cy, R * 2.6);
       if (isDay) {
         halo.addColorStop(0, 'rgba(255,244,205,0.85)');
@@ -67,16 +88,16 @@ const AmbientSky = ({ enabled, ambient }) => {
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
     };
 
     const paintVeil = () => {
-      if (weather === 'clouds' || weather === 'storm') ctx.fillStyle = 'rgba(120,126,140,0.12)';
-      else if (weather === 'fog') ctx.fillStyle = 'rgba(184,188,198,0.14)';
-      else return;
+      if (!veil) return;
+      ctx.fillStyle = veil;
       ctx.fillRect(0, 0, w, h);
     };
 
-    const frame = () => {
+    const paintFrame = () => {
       ctx.clearRect(0, 0, w, h);
       paintVeil();
       paintOrb();
@@ -111,7 +132,15 @@ const AmbientSky = ({ enabled, ambient }) => {
           }
         }
       }
-      raf = requestAnimationFrame(frame);
+      if (weather === 'storm') {
+        if (flash <= 0 && Math.random() < 0.006) flash = 0.35 + Math.random() * 0.25;
+        if (flash > 0) {
+          ctx.fillStyle = `rgba(255,255,255,${flash})`;
+          ctx.fillRect(0, 0, w, h);
+          flash -= 0.04;
+        }
+      }
+      raf = requestAnimationFrame(paintFrame);
     };
 
     if (reduced) {
@@ -119,7 +148,7 @@ const AmbientSky = ({ enabled, ambient }) => {
       paintVeil();
       paintOrb();
     } else {
-      raf = requestAnimationFrame(frame);
+      raf = requestAnimationFrame(paintFrame);
     }
 
     return () => {

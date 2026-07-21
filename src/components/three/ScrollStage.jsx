@@ -5,8 +5,10 @@ import ParticleField from './ParticleField';
 import { isCompact } from './responsive';
 
 // time-of-day lighting so the 3D scenes brighten with the ambient palette
-const AMBIENT_LIGHT = { dawn: 0.6, day: 0.9, dusk: 0.45, night: 0.35 };
-const KEY_COLOR = { dawn: '#ffd9b0', day: '#ffffff', dusk: '#ffb27a', night: '#ffffff' };
+const AMBIENT_LIGHT = { dawn: 0.6, day: 0.9, afternoon: 0.82, dusk: 0.45, night: 0.35 };
+const KEY_COLOR = {
+  dawn: '#ffd9b0', day: '#ffffff', afternoon: '#ffe0b0', dusk: '#ffb27a', night: '#ffffff',
+};
 
 // the scene materials/glows are tuned to pop against black; on the light
 // daytime palettes they read as neon, so grade the whole stage down —
@@ -14,6 +16,7 @@ const KEY_COLOR = { dawn: '#ffd9b0', day: '#ffffff', dusk: '#ffb27a', night: '#f
 const CANVAS_FILTER = {
   dawn: 'saturate(0.8) brightness(1.05)',
   day: 'saturate(0.62) brightness(1.1) contrast(0.95)',
+  afternoon: 'saturate(0.66) brightness(1.08)',
   dusk: 'saturate(0.92)',
   night: 'none',
 };
