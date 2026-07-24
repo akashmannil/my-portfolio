@@ -5,6 +5,7 @@ import TabView from './components/TabView';
 import TabProgress from './components/TabProgress';
 import ProjectHotspot from './components/ProjectHotspot';
 import AmbientSky from './components/AmbientSky';
+import GlassView from './components/GlassView';
 import { setStageTab } from './components/three/stagePose';
 import useEdgeNav, { markTabNav } from './hooks/useEdgeNav';
 import useAmbient from './hooks/useAmbient';
@@ -53,6 +54,7 @@ const App = () => {
       <main className="relative z-10">
         <TabView tab={tab} onSelect={selectTab} />
       </main>
+      <GlassView enabled={ambientOn} ambient={ambient} />
       <TabProgress activeTab={tab} onSelect={selectTab} />
       <ProjectHotspot activeTab={tab} />
     </div>

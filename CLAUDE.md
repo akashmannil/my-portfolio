@@ -63,7 +63,7 @@ Off by default; toggled and configured from the navbar settings popover (`Ambien
 - Applies a per-phase palette by overriding the `@theme` colour tokens as inline CSS variables on `<html>` (dawn/day/afternoon flip to light themes; dusk/night stay dark). Toggling off removes the overrides, reverting to the default dark theme. Phase and manual overrides persist in `localStorage` (`ambient`, `ambient-manual`).
 - **Auto vs manual:** each of Time/Weather defaults to `Auto`. Auto weather requests **geolocation** (rounded to ~1km) and fetches **Open-Meteo** (no API key; refreshes every 10 min, clock re-checked each minute); denied/failed → **time-only** (palette from the clock, no weather). Setting Time or Weather to a specific value overrides Auto — and if Weather is manual, geolocation/network is never touched. The exported `AMBIENT_PHASES` / `AMBIENT_WEATHERS` drive the selects.
 
-Weather visuals are a canvas overlay, `src/components/AmbientSky.jsx` (sun/moon dimmed under overcast, per-condition sky veil, rain/snow whose colour adapts to the light/dark palette, storm lightning; respects `prefers-reduced-motion`). `ScrollStage` also, per phase, brightens its lights and applies a `CANVAS_FILTER` colour-grade to the 3D layer so the models don't read as neon on light palettes. **The performance disclaimer in `AmbientToggle` is required — keep it** (the mode runs continuous canvas + 3D work). When adding a phase, update the palette in `useAmbient` AND the `AMBIENT_LIGHT` / `KEY_COLOR` / `CANVAS_FILTER` maps in `ScrollStage` and `ORB_Y` in `AmbientSky`.
+Weather visuals are two canvas overlays: `src/components/AmbientSky.jsx` (z-0, BEHIND the 3D stage — sun/moon dimmed under overcast, per-condition sky veil, rain/snow whose colour adapts to the light/dark palette, storm lightning) and `src/components/GlassView.jsx` (z-20, IN FRONT of the page content but below the interactive UI — a "viewed through glass" pane: overall tint, edge condensation frost, a drifting reflection glare, and refractive water droplets that slide as rain-streaks or sit as condensation beads; beads bias to the edges so the reading area stays clear). Both respect `prefers-reduced-motion`. `ScrollStage` also, per phase, brightens its lights and applies a `CANVAS_FILTER` colour-grade to the 3D layer so the models don't read as neon on light palettes. **The performance disclaimer in `AmbientToggle` is required — keep it** (the mode runs continuous canvas + 3D work). When adding a phase, update the palette in `useAmbient` AND the `AMBIENT_LIGHT` / `KEY_COLOR` / `CANVAS_FILTER` maps in `ScrollStage` and `ORB_Y` in `AmbientSky`.
 
 ## Coding Standards
 
@@ -94,6 +94,7 @@ See `.claude/rules/` for detailed rules. Short version:
 | Change theme colours / fonts | `src/index.css` → `@theme` tokens |
 | Adjust ambient time-of-day palettes / weather mapping | `src/hooks/useAmbient.js` (`PALETTES`, `weatherFromCode`) |
 | Adjust ambient sky/weather visuals | `src/components/AmbientSky.jsx` |
+| Adjust the "glass pane" overlay (droplets/frost/glare) | `src/components/GlassView.jsx` → `GLASS` per-weather map |
 | Tune per-tab 3D framing / colour | `src/components/three/stagePose.js` → `tabPoses` |
 | Adjust the nav indicator / advance control | `src/components/TabProgress.jsx` |
 | Adjust edge-scroll tab crossing | `src/hooks/useEdgeNav.js` |
