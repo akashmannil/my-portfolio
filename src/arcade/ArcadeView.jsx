@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { createGame, drawGame, updateGame } from './game';
 import { KEY_AREA, SCREEN, VIEW_H, VIEW_W, drawScene } from './scene';
 import { decaySound, isMuted, play, setMuted, soundLevel } from './audio';
 import { setViewMode } from '../hooks/useViewMode';
+import TouchControls from './TouchControls';
 
 const CRT = (ctx, w, h) => {
   ctx.globalAlpha = 0.16;
@@ -15,6 +16,10 @@ const ArcadeView = () => {
   const wrap = useRef(null);
   const canvas = useRef(null);
   const screen = useRef(null);
+  const heldRef = useRef(new Set());
+  const edgesRef = useRef(new Set());
+  const stRef = useRef(null);
+  const handRef = useRef(null);
   const [muted, setMutedState] = useState(isMuted());
 
   useEffect(() => {
@@ -33,8 +38,12 @@ const ArcadeView = () => {
     const g = createGame(SCREEN.w, SCREEN.h);
     const held = new Set();
     const edges = new Set();
+    heldRef.current = held;
+    edgesRef.current = edges;
     const hand = { x: KEY_AREA.x + KEY_AREA.w / 2, y: KEY_AREA.y, mouseX: 374 };
+    handRef.current = hand;
     const st = { litKey: -1, press: false, typing: 0, mousePress: false, power: true, level: 0, handX: hand.x, handY: hand.y, mouseHandX: hand.mouseX };
+    stRef.current = st;
 
     const KEYMAP = {
       ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right',
@@ -144,6 +153,29 @@ const ArcadeView = () => {
     if (!next) play('select');
   };
 
+  const handleTouch = useCallback((action, pressed) => {
+    const held = heldRef.current;
+    const edges = edgesRef.current;
+    const st = stRef.current;
+    const hand = handRef.current;
+    if (!held || !edges || !st || !hand) return;
+
+    if (pressed) {
+      if (!held.has(action)) edges.add(action);
+      held.add(action);
+      st.litKey = Math.abs(action.charCodeAt(0) * 7) % 44;
+      st.press = true;
+      st.typing = 0.25;
+      hand.x = KEY_AREA.x + 8 + (st.litKey % 14) * 12;
+      hand.y = KEY_AREA.y + 3 + Math.floor(st.litKey / 14) * 7;
+      play('key');
+    } else {
+      held.delete(action);
+      st.press = false;
+      st.litKey = -1;
+    }
+  }, []);
+
   return (
     <div ref={wrap} className="fixed inset-0 bg-[#0b0e17] flex items-center justify-center overflow-hidden">
       <canvas
@@ -165,9 +197,10 @@ const ArcadeView = () => {
           Exit Arcade
         </button>
       </div>
-      <p className="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-[0.2em] text-[#4d5f8a]">
+      <p className="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-[0.2em] text-[#4d5f8a] hidden md:block">
         Arrows / WASD move · Enter select · Esc back
       </p>
+      <TouchControls onInput={handleTouch} />
     </div>
   );
 };
