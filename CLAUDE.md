@@ -4,9 +4,14 @@ Team instructions for Claude Code when working in this repository.
 
 ## Project Overview
 
-This is **Akash Mannil's personal portfolio** — a single-page React app organised as **tabs** (Home / About / Experience / Skills / Work / Contact). Each tab is a full-height page with its own 3D Three.js scene; GSAP fades one tab out and the next in, while a single fixed canvas morphs its scene to match. All visible content (copy, images, experience, skills, projects) is managed through [src/constants/index.js](src/constants/index.js). The Work tab also pulls the latest public repos live from the GitHub API.
+This is **Akash Mannil's personal portfolio**. It ships **two mutually exclusive top-level views**, chosen by `src/hooks/useViewMode.js` (persisted in `localStorage.view-mode`; switching triggers a full page reload so the outgoing view's WebGL/canvas contexts tear down):
 
-There is **no long-scroll narrative and no ScrollTrigger/Lenis** — the app is tab-based. Individual tabs (Work, Contact) can scroll internally, but moving _between_ tabs is a state change, not a scroll.
+- **`standard`** (default) — a single-page React app organised as **tabs** (Home / About / Experience / Skills / Work / Contact). Each tab is a full-height page with its own 3D Three.js scene; GSAP fades one tab out and the next in, while a single fixed canvas morphs its scene to match.
+- **`arcade`** — a pixel-art workstation that presents the same portfolio as a little game on a CRT. See the Arcade section below.
+
+All visible content (copy, images, experience, skills, projects) is managed through [src/constants/index.js](src/constants/index.js) and feeds **both** views. The Work tab also pulls the latest public repos live from the GitHub API.
+
+In the standard view there is **no long-scroll narrative and no ScrollTrigger/Lenis** — it is tab-based. Individual tabs (Work, Contact) can scroll internally, but moving _between_ tabs is a state change, not a scroll.
 
 ## Stack at a Glance
 
@@ -19,7 +24,9 @@ There is **no long-scroll narrative and no ScrollTrigger/Lenis** — the app is 
 
 ## Architecture
 
-`App.jsx` holds the single source of truth: the active tab id in `useState`. It renders four persistent layers:
+`App.jsx` is a thin switch: it reads the view mode and renders either `<ArcadeView>` or `<StandardView>`. The tab/ambient hooks live inside `StandardView` so they never run in arcade mode.
+
+`StandardView` holds the single source of truth for the tabbed site: the active tab id in `useState`. It renders four persistent layers:
 
 | Layer | File | Role |
 | --- | --- | --- |
@@ -65,6 +72,25 @@ Off by default; toggled and configured from the navbar settings popover (`Ambien
 
 Weather visuals are two canvas overlays: `src/components/AmbientSky.jsx` (z-0, BEHIND the 3D stage — sun/moon dimmed under overcast, per-condition sky veil, rain/snow whose colour adapts to the light/dark palette, storm lightning) and `src/components/GlassView.jsx` (z-20, IN FRONT of the page content but below the interactive UI — a "viewed through glass" pane: overall tint, edge condensation frost, a drifting reflection glare, and refractive water droplets that slide as rain-streaks or sit as condensation beads; beads bias to the edges so the reading area stays clear). Both respect `prefers-reduced-motion`. `ScrollStage` also, per phase, brightens its lights and applies a `CANVAS_FILTER` colour-grade to the 3D layer so the models don't read as neon on light palettes. **The performance disclaimer in `AmbientToggle` is required — keep it** (the mode runs continuous canvas + 3D work). When adding a phase, update the palette in `useAmbient` AND the `AMBIENT_LIGHT` / `KEY_COLOR` / `CANVAS_FILTER` maps in `ScrollStage` and `ORB_Y` in `AmbientSky`.
 
+### The Arcade view (`src/arcade/`)
+
+Entered from the navbar's **Arcade** control (sitting right next to **Live**) and exited from the in-scene "Exit Arcade" button. Arcade and Live are mutually exclusive — switching to arcade forces `ambient` off.
+
+Everything is drawn programmatically onto a low-resolution canvas (`512×320`) that is CSS-scaled with `image-rendering: pixelated`, so there are **no sprite sheets, no image assets and no font files** to load:
+
+| File | Role |
+| --- | --- |
+| `ArcadeView.jsx` | React shell: sizes the canvas, runs the rAF loop, owns keyboard/pointer input, composites the game buffer into the scene |
+| `scene.js` | The room: CRT monitor + bezel, keyboard, mouse, two speakers, poster, plant, desk, and the over-the-shoulder pixel operator |
+| `game.js` | What's on the CRT: a `boot → hub → panel` state machine plus all five gamified panels |
+| `gameData.js` | Reshapes `constants` into game objects (stations, quests, inventory items, cabinets, comm channels) |
+| `pixelFont.js` | A hand-authored 5×7 bitmap font (`drawText`) so text stays true pixels at any scale |
+| `audio.js` | WebAudio chiptune blips, synthesised (no audio files), plus the decaying `soundLevel()` the speakers react to |
+
+The in-screen game deliberately shows **no prose** — the portfolio is expressed as game furniture: a walkable hub with five stations, then `STATS` (RPG stat bars), `QUEST LOG` (roles as cleared levels), `INVENTORY` (skills as tiered items), `ARCADE` (projects as selectable cabinets, Enter opens the real URL) and `COMMS` (socials as channels).
+
+**Interaction feedback is part of the scene, not a HUD:** pressing a key lights that keycap and moves the operator's left hand to it; moving/clicking the pointer moves the right hand on the mouse and presses its button; every sound cue raises `soundLevel()`, which pulses the speaker cones, fills the VU meters and emits anime-style radiating sound arcs. Sound has a visible mute toggle and only starts the AudioContext on a gesture.
+
 ## Coding Standards
 
 See `.claude/rules/` for detailed rules. Short version:
@@ -99,6 +125,9 @@ See `.claude/rules/` for detailed rules. Short version:
 | Adjust the nav indicator / advance control | `src/components/TabProgress.jsx` |
 | Adjust edge-scroll tab crossing | `src/hooks/useEdgeNav.js` |
 | Edit a 3D scene | `src/components/three/` → component named in the table above |
+| Change what the arcade shows on the CRT | `src/arcade/game.js` (`panels`) + `src/arcade/gameData.js` |
+| Change the arcade room / monitor / peripherals / operator | `src/arcade/scene.js` |
+| Add an arcade sound cue | `src/arcade/audio.js` → `NOTES` |
 
 ## Dev Commands
 
@@ -127,5 +156,8 @@ VITE_APP_EMAILJS_PUBLIC_KEY=
 - Do not add TypeScript without a deliberate project decision; this repo is plain JS
 - Do not install UI component libraries (Shadcn, MUI, etc.) — the design is intentionally custom
 - Do not refactor working 3D scenes unless the task requires it — Three.js/R3F setup is fragile to churn
-- Do not reintroduce ScrollTrigger/Lenis or a long-scroll narrative — the app is tab-based
+- Do not reintroduce ScrollTrigger/Lenis or a long-scroll narrative — the standard view is tab-based
 - Do not give the `ScrollStage` canvas pointer events — use the `ProjectHotspot` projection-overlay pattern to make 3D content clickable
+- Do not add sprite sheets, image assets or webfonts to `src/arcade/` — every pixel is drawn in code on purpose, which keeps the view dependency-free and instantly loadable
+- Do not put prose on the arcade CRT — content there is expressed as game objects (bars, badges, items, cabinets), not paragraphs
+- Do not let arcade and Live mode be enabled at once — they are mutually exclusive views

@@ -1,11 +1,15 @@
 # Akash Mannil — Portfolio
 
-A personal developer portfolio built as an interactive, **tab-based single-page app**. Each section — Home, About, Experience, Skills, Work, Contact — is a full-height page with its own animated 3D scene, and a single fixed WebGL canvas morphs between scenes as you move between tabs. The Work tab shows curated projects plus the latest repositories pulled live from GitHub.
+A personal developer portfolio with **two ways to explore it**. The default is an interactive, **tab-based single-page app**: each section — Home, About, Experience, Skills, Work, Contact — is a full-height page with its own animated 3D scene, and a single fixed WebGL canvas morphs between scenes as you move between tabs. The Work tab shows curated projects plus the latest repositories pulled live from GitHub.
+
+Flip the **Arcade** switch in the navbar and the whole site becomes a **pixel-art workstation** instead: the portfolio plays out as a little game on a CRT monitor, with a keyboard, mouse and speakers on the desk that react as you use them.
 
 **Live demo:** [my-portfolio-ashen-rho-24.vercel.app](https://my-portfolio-ashen-rho-24.vercel.app)
 
 ## Features
 
+- **Two views, one content source** — the tabbed 3D site and a pixel Arcade view, switched from the navbar; both read the same `constants` file
+- **Arcade view** — a hand-drawn pixel workstation (no sprite sheets, no image or font files — every pixel is drawn in code). Walk between five stations on the CRT to see stats as RPG bars, roles as cleared quests, skills as tiered inventory items, projects as playable cabinets and socials as comm channels. Typing lights keycaps and moves the operator's hands; synthesised chiptune cues make the speakers pulse with anime-style sound arcs
 - **Tabbed experience** — one 3D Three.js scene per tab, with GSAP cross-fades between tabs (no long-scroll narrative)
 - **Three ways to navigate** — the nav bar / mobile menu, a persistent progress indicator with an advance button, and "edge scroll" (keep scrolling past a page edge to cross to the next tab)
 - **Live GitHub feed** — the Work tab fetches recent public repos from the GitHub API and renders them alongside hand-picked projects
@@ -74,7 +78,14 @@ Swap images in `public/images/` and 3D models in `public/models/` as needed.
 
 ```text
 src/
-  App.jsx                 # owns the active-tab state; renders the persistent layers
+  App.jsx                 # switches between the two views; StandardView owns the tab state
+  arcade/                 # the pixel Arcade view (self-contained, no assets)
+    ArcadeView.jsx         # canvas shell, game loop, keyboard/pointer input
+    scene.js               # CRT, keyboard, mouse, speakers, desk, pixel operator
+    game.js                # what's on the screen: hub + the five gamified panels
+    gameData.js            # constants -> game objects
+    pixelFont.js           # 5x7 bitmap font
+    audio.js               # synthesised chiptune cues + speaker level
   main.jsx                # React entry point
   index.css               # Tailwind theme tokens + global styles
   constants/index.js      # all site content
@@ -94,6 +105,7 @@ src/
   hooks/
     useEdgeNav.js         # scroll-past-the-edge tab crossing
     useGithubRepos.js     # live GitHub repo fetch + cache
+    useViewMode.js        # standard <-> arcade switch (persisted, reloads)
 ```
 
 For a deeper architectural tour — how the 3D stage is driven, the navigation model, the GitHub feed, and how 3D content is made clickable — see [CLAUDE.md](CLAUDE.md).

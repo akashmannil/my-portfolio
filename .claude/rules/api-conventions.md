@@ -57,6 +57,16 @@ useGSAP(() => {
 - Mark a section as an in-tab scroll target with `data-scroll-stop` + `data-scroll-label="…"`; `TabProgress`'s advance control steps through these before crossing tabs
 - A tab that pages internally (e.g. Journey's role stepper) marks its wrapper `data-manual-edge-nav` and mounts `useEdgeNav({ manual: true, requireEdges: false })`
 
+## Arcade view (`src/arcade/`)
+
+- `src/hooks/useViewMode.js` owns the `standard` / `arcade` switch (`localStorage.view-mode`). `setViewMode` always reloads — never try to hot-swap the views, the outgoing one holds a WebGL or canvas context
+- Arcade and ambient Live mode are mutually exclusive; entering arcade writes `ambient=off`
+- Everything renders onto one low-res canvas (`VIEW_W×VIEW_H` in `scene.js`) that is CSS-scaled with `image-rendering: pixelated`. Keep all coordinates in that low-res space and let the browser scale — never draw at device resolution
+- **No external assets.** Text uses the hand-authored 5×7 bitmap font in `pixelFont.js`; sound is synthesised in `audio.js`; art is `fillRect` primitives. Don't introduce sprite sheets, image files or webfonts here
+- Content must come from `constants` via `gameData.js` — don't hard-code portfolio copy in the renderer, and don't render prose on the CRT (use bars, badges, items, cabinets)
+- Any new sound cue goes in `NOTES` (`audio.js`) and must raise `soundLevel()` so the on-screen speakers visibly react; keep the mute control working
+- The dev-only `window.__arcadeGoto(mode)` handle is guarded by `import.meta.env.DEV` for tests — don't rely on it at runtime
+
 ## GitHub repo feed (Work tab)
 
 - Configured entirely by `constants → github` (`username`, `excludeRepos`, `excludePrefixes`, `maxRepos`); fetched once and cached at module level in `src/hooks/useGithubRepos.js`

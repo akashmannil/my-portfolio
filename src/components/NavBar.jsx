@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import AmbientToggle from './AmbientToggle';
 import { tabs, resumeFile } from '../constants';
 
-const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient, manual, onManualChange }) => {
+const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient, manual, onManualChange, onEnterArcade }) => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -59,6 +59,23 @@ const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient, manu
             manual={manual}
             onManualChange={onManualChange}
           />
+          <button
+            onClick={onEnterArcade}
+            aria-label="Switch to the pixel arcade portfolio"
+            className="group hidden lg:flex items-center gap-2"
+          >
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-fog group-hover:text-paper transition-colors duration-300">
+              Arcade
+            </span>
+            <span className="grid grid-cols-2 gap-[2px]" aria-hidden="true">
+              {[0, 1, 2, 3].map((i) => (
+                <span
+                  key={i}
+                  className="h-[3px] w-[3px] bg-line group-hover:bg-accent transition-colors duration-300"
+                />
+              ))}
+            </span>
+          </button>
           <a
             href={resumeFile}
             download
@@ -122,6 +139,19 @@ const NavBar = ({ activeTab, onSelect, ambientOn, onToggleAmbient, ambient, manu
             manual={manual}
             onManualChange={onManualChange}
           />
+          <button
+            onClick={onEnterArcade}
+            className="mt-4 pt-4 border-t border-line/50 flex items-center justify-between w-full"
+          >
+            <span className="font-mono text-sm uppercase tracking-[0.25em] text-paper">
+              Arcade view
+            </span>
+            <span className="grid grid-cols-2 gap-[2px]" aria-hidden="true">
+              {[0, 1, 2, 3].map((i) => (
+                <span key={i} className="h-[4px] w-[4px] bg-accent" />
+              ))}
+            </span>
+          </button>
         </nav>
       </div>
     </header>

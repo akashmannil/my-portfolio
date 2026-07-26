@@ -47,6 +47,17 @@ Checklist:
 - [ ] Curated `projects` with a `repoName` are not duplicated in the live list
 - [ ] The 3D deck tracks the in-view/hovered project and its "open project" overlay opens the correct URL in a new tab (desktop, ≥1024px)
 
+## After Arcade view changes
+
+- [ ] The navbar **Arcade** control (next to Live) reloads into the pixel view, and `localStorage.view-mode` becomes `arcade` with `ambient` forced to `off`
+- [ ] Boot animation runs, then the hub appears; arrows/WASD walk the operator and stations highlight when approached
+- [ ] Enter opens each station; Esc returns to the hub
+- [ ] `ARCADE` → Enter opens the real project URL in a new tab; `COMMS` → Enter opens the social URL
+- [ ] Pressing keys lights a keycap and moves the left hand; moving/clicking the pointer moves and presses the mouse hand
+- [ ] Sound cues pulse the speaker cones and emit the radiating arcs; the mute toggle silences them
+- [ ] "Exit Arcade" returns to the standard tabbed site
+- [ ] Nothing overflows at 390px, and no prose text appears on the CRT
+
 ## After Contact form changes
 
 - [ ] Form submits and shows loading state

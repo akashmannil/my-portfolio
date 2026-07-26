@@ -6,9 +6,11 @@ import TabProgress from './components/TabProgress';
 import ProjectHotspot from './components/ProjectHotspot';
 import AmbientSky from './components/AmbientSky';
 import GlassView from './components/GlassView';
+import ArcadeView from './arcade/ArcadeView';
 import { setStageTab } from './components/three/stagePose';
 import useEdgeNav, { markTabNav } from './hooks/useEdgeNav';
 import useAmbient from './hooks/useAmbient';
+import { readViewMode, setViewMode } from './hooks/useViewMode';
 import { tabs } from './constants';
 
 const initialTab = () => {
@@ -16,7 +18,7 @@ const initialTab = () => {
   return tabs.some((t) => t.id === id) ? id : 'home';
 };
 
-const App = () => {
+const StandardView = () => {
   const [tab, setTab] = useState(() => {
     const id = initialTab();
     setStageTab(id);
@@ -48,6 +50,7 @@ const App = () => {
         ambient={ambient}
         manual={manual}
         onManualChange={setManual}
+        onEnterArcade={() => setViewMode('arcade')}
       />
       <ScrollStage activeTab={tab} ambient={ambient} ambientOn={ambientOn} />
       <AmbientSky enabled={ambientOn} ambient={ambient} />
@@ -60,5 +63,9 @@ const App = () => {
     </div>
   );
 };
+
+// the two views are mutually exclusive and swap on a full reload, so the
+// outgoing view's WebGL/canvas contexts tear down cleanly
+const App = () => (readViewMode() === 'arcade' ? <ArcadeView /> : <StandardView />);
 
 export default App;
