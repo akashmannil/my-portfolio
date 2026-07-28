@@ -3,6 +3,7 @@ import { createGame, describeGame, drawGame, updateGame } from './game';
 import { GAME_H, GAME_W, computeLayout, drawScene } from './scene';
 import { decaySound, isMuted, play, setMuted, soundLevel } from './audio';
 import { setViewMode } from '../hooks/useViewMode';
+import TouchControls from './TouchControls';
 
 const KEYMAP = {
   ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right',
