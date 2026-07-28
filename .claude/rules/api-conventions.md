@@ -61,7 +61,12 @@ useGSAP(() => {
 
 - `src/hooks/useViewMode.js` owns the `standard` / `arcade` switch (`localStorage.view-mode`). `setViewMode` always reloads — never try to hot-swap the views, the outgoing one holds a WebGL or canvas context
 - Arcade and ambient Live mode are mutually exclusive; entering arcade writes `ambient=off`
-- Everything renders onto one low-res canvas (`VIEW_W×VIEW_H` in `scene.js`) that is CSS-scaled with `image-rendering: pixelated`. Keep all coordinates in that low-res space and let the browser scale — never draw at device resolution
+- Everything renders onto one low-res canvas that is CSS-scaled with `image-rendering: pixelated`. Keep all coordinates in that low-res space and let the browser scale — never draw at device resolution
+- **Never hard-code scene coordinates.** `computeLayout(vw, vh, coarse)` in `scene.js` owns the composition and returns every rect (`bezel`, `screen`, `keys`, `mouse`, `speakers`, `pad`, `operator`, `deskY`); drawing code reads from it. Bands stack from the bottom (operator → gamepad → peripherals → desk) and the buffer height is sized so they always fit, whatever the aspect
+- The CRT draws the game buffer at **1:1** (`GAME_W×GAME_H`). Don't scale it to fill — fractional scaling makes the pixel font blurry. Extra viewport height becomes wall, which gets dressed
+- **Touch:** coarse-pointer/narrow viewports get a drawn gamepad plus real transparent `<button>`s positioned over it (same projection-overlay idea as `ProjectHotspot`). Keep every button ≥44 CSS px after scaling, and keep the tap "step" in the hub so a tap moves without holding
+- **Accessibility is not optional here** — the scene is pure canvas. `describeGame()` must keep returning an accurate plain-language description for the `aria-live` region (it is the only readable copy of the portfolio in this view), controls stay labelled and focusable with visible focus rings, and `prefers-reduced-motion` drops scanlines, sound arcs and the idle bob
+- In-screen control hints read from `g.touch` so they say `[A]/[B]` on touch and `[ENTER]/[ESC]` on keyboard — don't hard-code either
 - **No external assets.** Text uses the hand-authored 5×7 bitmap font in `pixelFont.js`; sound is synthesised in `audio.js`; art is `fillRect` primitives. Don't introduce sprite sheets, image files or webfonts here
 - Content must come from `constants` via `gameData.js` — don't hard-code portfolio copy in the renderer, and don't render prose on the CRT (use bars, badges, items, cabinets)
 - Any new sound cue goes in `NOTES` (`audio.js`) and must raise `soundLevel()` so the on-screen speakers visibly react; keep the mute control working

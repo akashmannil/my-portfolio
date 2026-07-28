@@ -64,10 +64,15 @@ const player = (ctx, x, y, dir, walk) => {
   rect(ctx, x + 4, y - 5, 2, 5, '#f0c39a');
 };
 
-const header = (ctx, W, label) => {
-  rect(ctx, 0, 0, W, 11, '#16203a');
+// control hints follow whichever input device the player is actually using
+const BACK_HINT = (g) => (g.touch ? '[B] BACK' : '[ESC] BACK');
+const OK_HINT = (g) => (g.touch ? '[A]' : '[ENTER]');
+
+const header = (ctx, g, label) => {
+  const hint = BACK_HINT(g);
+  rect(ctx, 0, 0, g.W, 11, '#16203a');
   drawText(ctx, label, 4, 2, { color: LIT });
-  drawText(ctx, '[ESC] BACK', W - textWidth('[ESC] BACK') - 4, 2, { color: DIM });
+  drawText(ctx, hint, g.W - textWidth(hint) - 4, 2, { color: DIM });
 };
 
 const bar = (ctx, x, y, w, pct, color) => {
@@ -79,7 +84,7 @@ const bar = (ctx, x, y, w, pct, color) => {
 /* ---------------- panels ---------------- */
 const panels = {
   about(ctx, g) {
-    header(ctx, g.W, 'PLAYER STATS');
+    header(ctx, g, 'PLAYER STATS');
     const cx = 14;
     rect(ctx, cx, 20, 22, 26, '#22304f');
     player(ctx, cx + 11, 40, 0, 0);
@@ -96,7 +101,7 @@ const panels = {
   },
 
   experience(ctx, g) {
-    header(ctx, g.W, 'QUEST LOG');
+    header(ctx, g, 'QUEST LOG');
     QUESTS.forEach((q, i) => {
       const y = 18 + i * 30;
       const on = i === g.sel;
@@ -112,7 +117,7 @@ const panels = {
   },
 
   skills(ctx, g) {
-    header(ctx, g.W, 'INVENTORY');
+    header(ctx, g, 'INVENTORY');
     const cols = 5, cw = 53, ch = 33;
     ITEMS.forEach((it, i) => {
       const cxp = 6 + (i % cols) * cw, cyp = 15 + Math.floor(i / cols) * ch;
@@ -132,7 +137,7 @@ const panels = {
   },
 
   work(ctx, g) {
-    header(ctx, g.W, 'ARCADE');
+    header(ctx, g, 'ARCADE');
     const n = CABINETS.length;
     CABINETS.forEach((c, i) => {
       // shortest way round so the carousel wraps instead of running off-screen
@@ -158,12 +163,12 @@ const panels = {
     const cur = CABINETS[g.sel % n];
     rect(ctx, 0, g.H - 22, g.W, 22, '#16203a');
     drawText(ctx, cur.tags.join(' '), 4, g.H - 19, { color: DIM });
-    drawText(ctx, '[ENTER] PLAY', 4, g.H - 9, { color: LIT });
+    drawText(ctx, `${OK_HINT(g)} PLAY`, 4, g.H - 9, { color: LIT });
     drawText(ctx, `${(g.sel % n) + 1}/${n}`, g.W - 26, g.H - 9, { color: DIM });
   },
 
   contact(ctx, g) {
-    header(ctx, g.W, 'COMMS');
+    header(ctx, g, 'COMMS');
     rect(ctx, 20, 20, g.W - 40, 40, '#131c33');
     frame(ctx, 20, 20, g.W - 40, 40, '#31406a');
     const wave = Math.sin(g.t * 4) * 3;
@@ -181,7 +186,7 @@ const panels = {
       rect(ctx, x + w / 2 - 4, 86, 8, 8, c.color);
       drawTextCentered(ctx, c.name.slice(0, 8), x + w / 2, 98, { color: on ? PAPER : DIM });
     });
-    drawText(ctx, '[ENTER] SEND', 4, g.H - 10, { color: LIT });
+    drawText(ctx, `${OK_HINT(g)} SEND`, 4, g.H - 10, { color: LIT });
   },
 };
 
@@ -191,7 +196,7 @@ const drawHub = (ctx, g) => {
   for (let x = 0; x < g.W; x += 12) rect(ctx, x, 16, 1, g.H - 16, GRID);
   rect(ctx, 0, 0, g.W, 11, '#16203a');
   drawText(ctx, 'PORTFOLIO.EXE', 4, 2, { color: LIT });
-  drawText(ctx, 'ARROWS+ENTER', g.W - textWidth('ARROWS+ENTER') - 4, 2, { color: DIM });
+  drawText(ctx, g.touch ? 'PAD + A' : 'ARROWS+ENTER', g.W - textWidth(g.touch ? 'PAD + A' : 'ARROWS+ENTER') - 4, 2, { color: DIM });
 
   STATIONS.forEach((s) => {
     const on = g.near === s.id;
@@ -207,7 +212,7 @@ const drawHub = (ctx, g) => {
   player(ctx, g.px, g.py, g.pdir, g.walk);
 
   if (g.near) {
-    const label = 'PRESS [ENTER]';
+    const label = g.touch ? 'PRESS [A]' : 'PRESS [ENTER]';
     const w = textWidth(label) + 8;
     rect(ctx, g.px - w / 2, g.py - 26, w, 11, '#0b1020');
     frame(ctx, g.px - w / 2, g.py - 26, w, 11, LIT);
@@ -227,7 +232,13 @@ export const updateGame = (g, input, dt) => {
 
   if (g.mode === 'hub') {
     const sp = 46 * dt;
+    // a tap gives an immediate step so touch users aren't forced to hold
+    const STEP = 13;
     let moved = false;
+    if (input.leftEdge) { g.px -= STEP; g.pdir = 1; moved = true; }
+    if (input.rightEdge) { g.px += STEP; g.pdir = 2; moved = true; }
+    if (input.upEdge) { g.py -= STEP; moved = true; }
+    if (input.downEdge) { g.py += STEP; moved = true; }
     if (input.left) { g.px -= sp; g.pdir = 1; moved = true; }
     if (input.right) { g.px += sp; g.pdir = 2; moved = true; }
     if (input.up) { g.py -= sp; moved = true; }
@@ -262,6 +273,40 @@ export const updateGame = (g, input, dt) => {
     else play('select');
   }
   if (input.backEdge) { g.mode = 'hub'; g.near = null; play('back'); }
+};
+
+// Plain-language equivalent of what the CRT is showing. The screen is a canvas,
+// so this is piped into an aria-live region — it is the accessible copy of the
+// portfolio content for anyone not looking at the pixels.
+export const describeGame = (g) => {
+  switch (g.mode) {
+    case 'boot':
+      return 'Akash Mannil portfolio system, loading.';
+    case 'hub':
+      return g.near
+        ? `Standing at the ${STATIONS.find((s) => s.id === g.near).label} station. Press Enter or the A button to open it.`
+        : `Portfolio hub. Move to a station: ${STATIONS.map((s) => s.label).join(', ')}.`;
+    case 'about':
+      return `Player stats. Akash Mannil, full stack developer, level 6. ${STATS.map((s) => `${s.label} ${s.value}${s.suffix}`).join('. ')}.`;
+    case 'experience': {
+      const q = QUESTS[g.sel];
+      return `Quest log, ${g.sel + 1} of ${QUESTS.length}. ${q.title}, ${q.from} to ${q.to}, ${q.tasks} objectives, cleared.`;
+    }
+    case 'skills': {
+      const it = ITEMS[g.sel];
+      return `Inventory, item ${g.sel + 1} of ${ITEMS.length}. ${it.name}, tier ${it.tier} of 5.`;
+    }
+    case 'work': {
+      const c = CABINETS[g.sel];
+      return `Arcade cabinet ${g.sel + 1} of ${CABINETS.length}. ${c.name}, built with ${c.tags.join(', ')}. Press Enter to open the project.`;
+    }
+    case 'contact': {
+      const ch = CHANNELS[g.sel];
+      return `Comms channel ${g.sel + 1} of ${CHANNELS.length}. ${ch.name}. Press Enter to open.`;
+    }
+    default:
+      return '';
+  }
 };
 
 export const drawGame = (ctx, g) => {

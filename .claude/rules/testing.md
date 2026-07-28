@@ -58,6 +58,17 @@ Checklist:
 - [ ] "Exit Arcade" returns to the standard tabbed site
 - [ ] Nothing overflows at 390px, and no prose text appears on the CRT
 
+### Arcade on touch / small screens
+
+- [ ] Phone portrait (390×844): the canvas fills the viewport height, the gamepad is fully visible, and every pad button measures ≥44 CSS px
+- [ ] Tapping a D-pad button once visibly moves the operator (no need to hold); A opens a station, B goes back
+- [ ] Phone landscape (844×390) and tablet portrait: monitor, keyboard, mouse, gamepad and operator are all on screen — nothing clipped
+- [ ] The CRT text stays crisp (the game buffer must be drawn 1:1, never fractionally scaled)
+- [ ] On desktop (fine pointer, ≥900px) no gamepad renders and the hints read `ENTER` / `ESC`; on touch they read `A` / `B`
+- [ ] Screen reader: the `aria-live` region announces the current station and selection (e.g. "Inventory, item 1 of 15. REACT, tier 5 of 5.")
+- [ ] Every control is reachable by Tab with a visible focus ring
+- [ ] With `prefers-reduced-motion`, scanlines, sound arcs and the idle bob are suppressed
+
 ## After Contact form changes
 
 - [ ] Form submits and shows loading state

@@ -10,6 +10,7 @@ Flip the **Arcade** switch in the navbar and the whole site becomes a **pixel-ar
 
 - **Two views, one content source** — the tabbed 3D site and a pixel Arcade view, switched from the navbar; both read the same `constants` file
 - **Arcade view** — a hand-drawn pixel workstation (no sprite sheets, no image or font files — every pixel is drawn in code). Walk between five stations on the CRT to see stats as RPG bars, roles as cleared quests, skills as tiered inventory items, projects as playable cabinets and socials as comm channels. Typing lights keycaps and moves the operator's hands; synthesised chiptune cues make the speakers pulse with anime-style sound arcs
+- **Plays on phones too** — the arcade recomposes itself for portrait, landscape and tablet, and adds a pixel gamepad on the desk with proper touch targets. It's built to be usable without sight or a mouse: real focusable buttons sit over the drawn pad, a live region narrates whatever the screen shows, and reduced-motion is respected
 - **Tabbed experience** — one 3D Three.js scene per tab, with GSAP cross-fades between tabs (no long-scroll narrative)
 - **Three ways to navigate** — the nav bar / mobile menu, a persistent progress indicator with an advance button, and "edge scroll" (keep scrolling past a page edge to cross to the next tab)
 - **Live GitHub feed** — the Work tab fetches recent public repos from the GitHub API and renders them alongside hand-picked projects

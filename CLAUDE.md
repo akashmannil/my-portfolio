@@ -76,12 +76,12 @@ Weather visuals are two canvas overlays: `src/components/AmbientSky.jsx` (z-0, B
 
 Entered from the navbar's **Arcade** control (sitting right next to **Live**) and exited from the in-scene "Exit Arcade" button. Arcade and Live are mutually exclusive — switching to arcade forces `ambient` off.
 
-Everything is drawn programmatically onto a low-resolution canvas (`512×320`) that is CSS-scaled with `image-rendering: pixelated`, so there are **no sprite sheets, no image assets and no font files** to load:
+Everything is drawn programmatically onto a low-resolution canvas that is CSS-scaled with `image-rendering: pixelated`, so there are **no sprite sheets, no image assets and no font files** to load:
 
 | File | Role |
 | --- | --- |
-| `ArcadeView.jsx` | React shell: sizes the canvas, runs the rAF loop, owns keyboard/pointer input, composites the game buffer into the scene |
-| `scene.js` | The room: CRT monitor + bezel, keyboard, mouse, two speakers, poster, plant, desk, and the over-the-shoulder pixel operator |
+| `ArcadeView.jsx` | React shell: sizes the canvas, runs the rAF loop, owns keyboard/pointer/touch input, composites the game buffer into the scene, and renders the a11y layer |
+| `scene.js` | `computeLayout()` (responsive composition) + the room: CRT monitor + bezel, keyboard, mouse, two speakers, room dressing, desk, the thumb gamepad, and the over-the-shoulder pixel operator |
 | `game.js` | What's on the CRT: a `boot → hub → panel` state machine plus all five gamified panels |
 | `gameData.js` | Reshapes `constants` into game objects (stations, quests, inventory items, cabinets, comm channels) |
 | `pixelFont.js` | A hand-authored 5×7 bitmap font (`drawText`) so text stays true pixels at any scale |
@@ -90,6 +90,10 @@ Everything is drawn programmatically onto a low-resolution canvas (`512×320`) t
 The in-screen game deliberately shows **no prose** — the portfolio is expressed as game furniture: a walkable hub with five stations, then `STATS` (RPG stat bars), `QUEST LOG` (roles as cleared levels), `INVENTORY` (skills as tiered items), `ARCADE` (projects as selectable cabinets, Enter opens the real URL) and `COMMS` (socials as channels).
 
 **Interaction feedback is part of the scene, not a HUD:** pressing a key lights that keycap and moves the operator's left hand to it; moving/clicking the pointer moves the right hand on the mouse and presses its button; every sound cue raises `soundLevel()`, which pulses the speaker cones, fills the VU meters and emits anime-style radiating sound arcs. Sound has a visible mute toggle and only starts the AudioContext on a gesture.
+
+**Responsive layout.** `computeLayout(vw, vh, coarse)` composes the scene per viewport rather than using fixed coordinates. The CRT always renders the game buffer at **1:1** (`GAME_W×GAME_H`, 276×152) so its pixels stay crisp on every device; the buffer's _height_ is then whatever the stacked bands need — operator, optional gamepad, peripherals, desk — and any viewport taller than that becomes extra wall, which is dressed with a poster and shelf instead of left empty. Landscape uses a 512-wide buffer, portrait a 360-wide one with the monitor centred in the wall. The layout guarantees every band fits at any aspect, so nothing clips on a landscape phone.
+
+**Touch and accessibility.** On coarse-pointer or narrow viewports the layout adds a **pixel gamepad drawn on the desk** (D-pad + A/B). Real transparent `<button>` elements are positioned exactly over the drawn buttons — the same projection-overlay idea as `ProjectHotspot` — which gives touch targets (≥44 CSS px), keyboard focus with visible rings, and screen-reader labels for a scene that is otherwise just canvas. A tap also applies an immediate movement step so touch users don't have to hold. In-screen control hints follow the device (`[A]/[B]` vs `[ENTER]/[ESC]`) via `g.touch`. `describeGame()` feeds an `aria-live` region with a plain-language description of whatever the CRT shows — this is the accessible copy of the portfolio content, since none of it exists as DOM text. `prefers-reduced-motion` drops the scanlines, sound arcs and idle bob.
 
 ## Coding Standards
 
